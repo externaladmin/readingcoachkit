@@ -1,9 +1,4 @@
 {
-  "functions": {
-    "api/subscribe.js": {
-      "runtime": "@vercel/node@3.0.7"
-    }
-  },
   "routes": [
     {
       "src": "/api/(.*)",
