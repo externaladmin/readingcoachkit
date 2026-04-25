@@ -1,0 +1,1871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Reading Fluency Tracker — Free WCPM Progress Monitoring for Reading Coaches</title>
+<meta name="description" content="Free reading fluency tracker for K-5 coaches. Track WCPM progress, compare to Hasbrouck-Tindal norms, identify at-risk students, and export PDF reports for IEP and parent conferences.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://readingcoachkit.com/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Reading Fluency Tracker — Free WCPM Progress Monitoring">
+<meta property="og:description" content="Track student WCPM fluency, compare to grade-level norms, and export progress reports for IEP meetings. Free for reading coaches.">
+<meta property="og:url" content="https://readingcoachkit.com/">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "name": "readingcoachkit",
+      "url": "https://readingcoachkit.com",
+      "description": "Free tools for reading coaches and literacy specialists"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "Reading Fluency Tracker",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "Web",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "description": "Track student Words Correct Per Minute (WCPM) fluency scores over time, compare against Hasbrouck-Tindal grade-level norms, and identify students at risk of missing end-of-year benchmarks.",
+      "url": "https://readingcoachkit.com/#fluency"
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is a good WCPM score by grade level?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Based on Hasbrouck-Tindal norms (2017), the 50th percentile WCPM benchmarks are: Grade 1: Fall 23, Winter 72, Spring 82. Grade 2: Fall 87, Winter 97, Spring 124. Grade 3: Fall 107, Winter 123, Spring 142. Grade 4: Fall 123, Winter 139, Spring 150. Grade 5: Fall 139, Winter 150, Spring 157. Students scoring below the 25th percentile may need additional fluency intervention support."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How often should I assess reading fluency?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "For students receiving Tier 2 or Tier 3 intervention, assess fluency every 2 weeks to monitor progress. For benchmark monitoring, assess at least three times per year (fall, winter, spring) using the standard Hasbrouck-Tindal assessment windows. Students at risk should be monitored more frequently so instruction can be adjusted before too much time passes."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the Hasbrouck-Tindal fluency norms chart?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The Hasbrouck-Tindal Oral Reading Fluency norms are research-based benchmarks published by Jan Hasbrouck and Gerald Tindal that show the typical WCPM (Words Correct Per Minute) scores at the 10th, 25th, 50th, 75th, and 90th percentiles for grades 1-8, measured in fall, winter, and spring. They are widely used by reading specialists and coaches to determine whether a student's fluency is on track, at risk, or significantly below grade level."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I track reading fluency progress for IEP documentation?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "For IEP documentation, collect baseline WCPM data before intervention begins, then measure progress at least every 2 weeks. Record the date, passage level, WCPM score, and any significant observations. Track trend lines against grade-level norms. Exportable PDF progress reports showing a student's trajectory over time are especially useful for IEP meetings, parent conferences, and eligibility reviews."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- GA4 placeholder — replace with your measurement ID -->
+<!--
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XXXXXXXXXX');
+</script>
+-->
+
+<style>
+:root {
+  --blue:       #2D4A6B;
+  --blue-dark:  #1E3350;
+  --terra:      #E8734A;
+  --terra-dark: #C45A32;
+  --bg:         #FAFAF7;
+  --bg2:        #F0EDE8;
+  --bg3:        #E8E4DE;
+  --text:       #1E2D3D;
+  --text2:      #4A5A6B;
+  --text3:      #8A9AAB;
+  --bd:         rgba(30,45,61,0.12);
+  --green:      #2E7D4F;
+  --green-bg:   rgba(46,125,79,0.08);
+  --amber:      #8B6914;
+  --amber-bg:   rgba(139,105,20,0.08);
+  --red:        #C0392B;
+  --red-bg:     rgba(192,57,43,0.08);
+  --serif:      'DM Serif Display', Georgia, serif;
+  --sans:       'DM Sans', system-ui, sans-serif;
+  --mono:       'DM Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { height: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── TOPBAR ── */
+.tb {
+  height: 48px;
+  background: var(--blue);
+  border-bottom: 2px solid var(--terra);
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.logo {
+  font-family: var(--sans);
+  font-size: 17px;
+  font-weight: 400;
+  color: #fff;
+  letter-spacing: -0.01em;
+}
+.logo b {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-style: italic;
+  color: #fff;
+}
+.logo span {
+  color: var(--terra);
+  font-family: var(--sans);
+  font-weight: 600;
+}
+.tb-r { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.tb-signin {
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
+  text-decoration: none;
+  font-weight: 500;
+}
+.tb-cta {
+  background: var(--terra);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 3px;
+  text-decoration: none;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+
+/* ── TABS ── */
+.tabs {
+  height: 40px;
+  background: var(--blue);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  padding: 0 4px;
+  gap: 0;
+  flex-shrink: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  align-items: center;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 0 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.5);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: all .12s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.tab.on { color: rgba(255,255,255,0.95); border-bottom-color: var(--terra); }
+.tab-n {
+  font-family: var(--mono);
+  font-size: 9px;
+  background: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.6);
+  padding: 1px 5px;
+  border-radius: 2px;
+}
+.tab-soon {
+  opacity: 0.35;
+  cursor: default;
+  pointer-events: none;
+}
+.tb-feedback {
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.35);
+  text-decoration: none;
+  padding: 0 14px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  border-left: 1px solid rgba(255,255,255,0.08);
+  white-space: nowrap;
+  letter-spacing: 0.03em;
+  transition: color .12s;
+}
+.tb-feedback:hover { color: rgba(255,255,255,0.7); }
+
+/* ── PANELS ── */
+.panels { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+.panel { display: none; flex: 1; overflow: hidden; }
+.panel.on { display: flex; }
+
+/* ── SPLIT ── */
+.split {
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+.left {
+  background: var(--bg2);
+  border-right: 1px solid var(--bd);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--bg3) transparent;
+}
+.right {
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── LEFT INPUT PANEL ── */
+.lh {
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid var(--bd);
+  flex-shrink: 0;
+}
+.lh-q {
+  font-family: var(--serif);
+  font-size: 21px;
+  font-weight: 400;
+  color: var(--text);
+  line-height: 1.25;
+  margin-bottom: 5px;
+}
+.lh-hint {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.5;
+}
+.lbody {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 1;
+}
+
+/* ── FIELD ── */
+.fi { display: flex; flex-direction: column; gap: 5px; }
+.fi label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text2);
+}
+.fi-note {
+  font-size: 11px;
+  color: var(--text3);
+  font-style: italic;
+  margin-top: -2px;
+}
+.fi-in { position: relative; }
+.fi input, .fi select {
+  width: 100%;
+  height: 40px;
+  background: #fff;
+  border: 1px solid rgba(30,45,61,0.2);
+  border-radius: 3px;
+  color: var(--text);
+  font-size: 15px;
+  font-family: var(--mono);
+  font-weight: 400;
+  outline: none;
+  padding: 0 10px;
+  -webkit-appearance: none;
+  transition: border-color .15s;
+}
+.fi select {
+  font-family: var(--sans);
+  font-size: 14px;
+  cursor: pointer;
+}
+.fi input:focus, .fi select:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(45,74,107,0.1);
+}
+.fi2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.fi3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+
+/* Grade selector buttons */
+.grade-btns { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+.gb {
+  height: 40px;
+  background: #fff;
+  border: 1px solid rgba(30,45,61,0.18);
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text2);
+  transition: all .12s;
+  font-family: var(--sans);
+}
+.gb.on {
+  border-color: var(--blue);
+  border-width: 2px;
+  background: rgba(45,74,107,0.07);
+  color: var(--blue-dark);
+}
+
+/* Period selector */
+.period-btns { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.pb {
+  height: 38px;
+  background: #fff;
+  border: 1px solid rgba(30,45,61,0.18);
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text2);
+  transition: all .12s;
+  font-family: var(--sans);
+}
+.pb.on {
+  border-color: var(--terra);
+  border-width: 2px;
+  background: rgba(232,115,74,0.07);
+  color: var(--terra-dark);
+  font-weight: 600;
+}
+
+/* Score entries */
+.score-list { display: flex; flex-direction: column; gap: 8px; }
+.score-row {
+  display: grid;
+  grid-template-columns: 1fr 80px 32px;
+  gap: 8px;
+  align-items: center;
+}
+.score-row input {
+  height: 36px;
+  padding: 0 8px;
+  font-size: 14px;
+}
+.score-del {
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(30,45,61,0.18);
+  border-radius: 3px;
+  background: #fff;
+  cursor: pointer;
+  color: var(--text3);
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .12s;
+  flex-shrink: 0;
+}
+.score-del:hover { border-color: var(--red); color: var(--red); background: var(--red-bg); }
+.add-score-btn {
+  width: 100%;
+  height: 36px;
+  background: #fff;
+  border: 1px dashed rgba(45,74,107,0.3);
+  border-radius: 3px;
+  color: var(--blue);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .12s;
+  font-family: var(--sans);
+}
+.add-score-btn:hover { border-color: var(--blue); background: rgba(45,74,107,0.04); }
+.score-header { display: grid; grid-template-columns: 1fr 80px 32px; gap: 8px; }
+.score-col-lbl {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text3);
+}
+
+/* Privacy note */
+.privacy-note {
+  font-size: 12px;
+  color: var(--green);
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: rgba(46,125,79,0.07);
+  border: 1px solid rgba(46,125,79,0.25);
+  border-left: 3px solid var(--green);
+  border-radius: 0 3px 3px 0;
+  padding: 10px 12px;
+  line-height: 1.5;
+}
+.privacy-note strong {
+  color: var(--green);
+  font-weight: 600;
+}
+.privacy-note-icon {
+  font-size: 15px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ── RESULTS PANEL ── */
+.rh {
+  padding: 12px 20px 10px;
+  border-bottom: 1px solid var(--bd);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.rh-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text2);
+}
+.live-dot {
+  font-size: 11px;
+  color: var(--green);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.live-dot::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+}
+.rbody {
+  flex: 1;
+  padding: 14px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.rbody::-webkit-scrollbar { display: none; }
+
+/* ── BIG ANSWER ── */
+.ba {
+  background: #fff;
+  border: 1px solid var(--bd);
+  border-radius: 5px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.ba-lbl {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text2);
+  margin-bottom: 4px;
+}
+.ba-val {
+  font-family: var(--mono);
+  font-size: 40px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1;
+}
+.ba-sub { font-size: 13px; color: var(--text2); margin-top: 5px; }
+.ba-right { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; flex-shrink: 0; }
+.ba-stat-lbl { font-size: 11px; color: var(--text2); text-align: right; }
+.ba-stat-val {
+  font-family: var(--mono);
+  font-size: 15px;
+  color: var(--text);
+  font-weight: 500;
+  text-align: right;
+}
+
+/* ── STAT GRID ── */
+.sg3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.sg2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.sc {
+  background: #fff;
+  border: 1px solid var(--bd);
+  border-radius: 3px;
+  padding: 10px 12px;
+}
+.sc-lbl {
+  font-size: 11px;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+.sc-val {
+  font-family: var(--mono);
+  font-size: 18px;
+  color: var(--text);
+  font-weight: 500;
+}
+.sc-val.g { color: var(--green); }
+.sc-val.a { color: var(--amber); }
+.sc-val.r { color: var(--red); }
+.sc-sub { font-size: 11px; color: var(--text2); margin-top: 2px; }
+
+/* ── BENCHMARK BAR ── */
+.bench-bar-wrap {
+  background: #fff;
+  border: 1px solid var(--bd);
+  border-radius: 3px;
+  padding: 12px 14px;
+}
+.bench-bar-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text2);
+  margin-bottom: 10px;
+}
+.bench-bar-track {
+  position: relative;
+  height: 12px;
+  background: var(--bg3);
+  border-radius: 6px;
+  margin-bottom: 6px;
+  overflow: visible;
+}
+.bench-bar-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.4s ease;
+  background: var(--blue);
+}
+.bench-bar-fill.g { background: var(--green); }
+.bench-bar-fill.a { background: var(--amber); }
+.bench-bar-fill.r { background: var(--red); }
+.bench-marker {
+  position: absolute;
+  top: -4px;
+  width: 3px;
+  height: 20px;
+  background: rgba(30,45,61,0.3);
+  border-radius: 2px;
+  transform: translateX(-50%);
+}
+.bench-marker-lbl {
+  position: absolute;
+  top: 20px;
+  font-size: 9px;
+  color: var(--text3);
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+.bench-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--text3);
+  margin-top: 18px;
+}
+
+/* ── TREND CHART ── */
+.chart-wrap {
+  background: #fff;
+  border: 1px solid var(--bd);
+  border-radius: 3px;
+  padding: 12px 14px;
+}
+.chart-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text2);
+  margin-bottom: 10px;
+}
+canvas#fluencyChart {
+  width: 100% !important;
+  max-height: 160px;
+}
+
+/* ── BREAKDOWN TABLE ── */
+.bk {
+  background: #fff;
+  border: 1px solid var(--bd);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.bk-r {
+  display: flex;
+  justify-content: space-between;
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--bd);
+  font-size: 13px;
+}
+.bk-r:last-child { border-bottom: none; }
+.bk-lbl { color: var(--text2); }
+.bk-val {
+  font-family: var(--mono);
+  color: var(--text);
+  font-weight: 500;
+}
+.bk-r.hi { background: rgba(45,74,107,0.03); }
+.bk-r.hi .bk-val { color: var(--blue-dark); font-weight: 600; }
+
+/* ── VERDICT ── */
+.verdict {
+  border-radius: 3px;
+  padding: 11px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  line-height: 1.4;
+}
+.verdict.on-track {
+  background: var(--green-bg);
+  border: 1px solid rgba(46,125,79,0.25);
+  color: var(--green);
+}
+.verdict.monitor {
+  background: var(--amber-bg);
+  border: 1px solid rgba(139,105,20,0.25);
+  color: var(--amber);
+}
+.verdict.at-risk {
+  background: var(--red-bg);
+  border: 1px solid rgba(192,57,43,0.25);
+  color: var(--red);
+}
+.vdot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.verdict.on-track .vdot { background: var(--green); }
+.verdict.monitor .vdot { background: var(--amber); }
+.verdict.at-risk .vdot { background: var(--red); }
+
+/* ── RECOMMENDATION ── */
+.rec {
+  background: var(--bg2);
+  border: 1px solid var(--bd);
+  border-left: 3px solid var(--terra);
+  border-radius: 0 3px 3px 0;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.55;
+}
+.rec strong { color: var(--text); font-weight: 600; }
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  gap: 12px;
+}
+.empty-icon { font-size: 40px; opacity: 0.35; }
+.empty-title {
+  font-family: var(--serif);
+  font-size: 18px;
+  color: var(--text2);
+}
+.empty-sub { font-size: 13px; color: var(--text3); line-height: 1.5; max-width: 280px; }
+
+/* ── SPONSOR SLOT ── */
+.sponsor-slot {
+  flex-shrink: 0;
+  padding: 10px 20px;
+  border-top: 1px solid var(--bd);
+  background: var(--bg2);
+  display: none;
+}
+@media(min-width: 900px) { .sponsor-slot { display: block; } }
+.sponsor-label {
+  font-size: 9px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+}
+.sponsor-inner {
+  height: 80px;
+  border: 1px solid rgba(45,74,107,0.15);
+  border-radius: 3px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 16px;
+}
+.sponsor-logo {
+  width: 52px;
+  height: 36px;
+  background: rgba(45,74,107,0.06);
+  border: 1px solid rgba(45,74,107,0.12);
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--blue);
+  letter-spacing: 0.03em;
+}
+.sponsor-copy { flex: 1; }
+.sponsor-head {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.3;
+  margin-bottom: 2px;
+}
+.sponsor-sub { font-size: 12px; color: var(--text2); }
+.sponsor-cta {
+  padding: 7px 16px;
+  border: 1px solid rgba(45,74,107,0.25);
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--blue);
+  background: rgba(45,74,107,0.05);
+  white-space: nowrap;
+  flex-shrink: 0;
+  cursor: pointer;
+  font-family: var(--sans);
+  letter-spacing: 0.02em;
+  transition: all .12s;
+}
+.sponsor-cta:hover { background: rgba(45,74,107,0.1); }
+
+/* ── GATE BAR ── */
+.gate {
+  padding: 12px 20px 14px;
+  border-top: 1px solid var(--bd);
+  flex-shrink: 0;
+  background: var(--bg2);
+}
+.gate-btns { display: flex; gap: 8px; margin-bottom: 6px; }
+.g-primary {
+  flex: 1;
+  height: 40px;
+  background: var(--terra);
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  font-family: var(--sans);
+  transition: background .12s;
+}
+.g-primary:hover { background: var(--terra-dark); }
+.g-sec {
+  height: 40px;
+  padding: 0 14px;
+  background: #fff;
+  border: 1px solid rgba(30,45,61,0.22);
+  border-radius: 3px;
+  font-size: 13px;
+  color: var(--text2);
+  cursor: pointer;
+  white-space: nowrap;
+  font-weight: 500;
+  font-family: var(--sans);
+}
+.gate-note { font-size: 11px; color: var(--text3); text-align: center; }
+
+/* ── MODALS ── */
+.modal-bg {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(30,45,61,0.5);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+}
+.modal-bg.open { display: flex; }
+.modal {
+  background: var(--bg);
+  border-radius: 6px;
+  padding: 28px;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 8px 40px rgba(30,45,61,0.2);
+}
+.modal h3 {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--text);
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+.modal p { font-size: 14px; color: var(--text2); line-height: 1.6; margin-bottom: 16px; }
+.modal input[type="email"], .modal input[type="text"] {
+  width: 100%;
+  height: 44px;
+  border: 1px solid rgba(30,45,61,0.22);
+  border-radius: 3px;
+  padding: 0 14px;
+  font-family: var(--sans);
+  font-size: 15px;
+  color: var(--text);
+  background: #fff;
+  outline: none;
+  margin-bottom: 10px;
+  transition: border-color .15s;
+}
+.modal input:focus { border-color: var(--blue); }
+.modal-note {
+  font-size: 11px;
+  color: var(--text3);
+  margin-bottom: 14px;
+  font-style: italic;
+}
+.modal textarea {
+  width: 100%;
+  height: 80px;
+  border: 1px solid rgba(30,45,61,0.2);
+  border-radius: 3px;
+  padding: 10px 14px;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--text);
+  background: #fff;
+  resize: none;
+  outline: none;
+  margin-bottom: 10px;
+}
+.modal textarea:focus { border-color: var(--blue); }
+.modal-btns { display: flex; gap: 10px; margin-top: 4px; }
+.modal-send {
+  flex: 1;
+  height: 42px;
+  background: var(--terra);
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--sans);
+  transition: background .12s;
+}
+.modal-send:hover { background: var(--terra-dark); }
+.modal-cancel {
+  height: 42px;
+  padding: 0 18px;
+  background: #fff;
+  border: 1px solid rgba(30,45,61,0.2);
+  border-radius: 3px;
+  font-size: 14px;
+  color: var(--text2);
+  cursor: pointer;
+  font-family: var(--sans);
+}
+.modal-success { text-align: center; padding: 10px 0 4px; }
+.modal-success .check { font-size: 36px; margin-bottom: 10px; }
+.modal-success h4 { font-family: var(--serif); font-size: 20px; color: var(--text); margin-bottom: 6px; }
+.modal-success p { font-size: 14px; color: var(--text2); margin-bottom: 18px; }
+
+/* ── PRINT / PDF EXPORT ── */
+@media print {
+  /* Hide all chrome — only show the results panel */
+  .tb, .tabs, .left, .sponsor-slot, .gate, .modal-bg { display: none !important; }
+  body, html { background: #fff; overflow: visible; height: auto; }
+  #app-shell { height: auto; display: block; }
+  .panels, .panel { display: block; overflow: visible; }
+  .split { display: block; }
+  .right {
+    display: block;
+    overflow: visible;
+    width: 100%;
+    background: #fff;
+  }
+  .rh {
+    padding: 16px 24px 12px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+  }
+  .rbody {
+    padding: 16px 24px;
+    overflow: visible;
+    display: block;
+  }
+  /* Print header */
+  .right::before {
+    content: 'Reading Fluency Progress Report — readingcoachkit.com';
+    display: block;
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: #2D4A6B;
+    padding: 12px 24px 0;
+    letter-spacing: 0.01em;
+  }
+  /* Force page breaks to not split cards */
+  .ba, .sg3, .sg2, .bench-bar-wrap, .chart-wrap, .bk, .verdict, .rec {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  /* Make cards print-friendly */
+  .ba, .sc, .bench-bar-wrap, .chart-wrap, .bk {
+    border: 1px solid #ddd !important;
+    box-shadow: none !important;
+  }
+  /* Ensure colors print */
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  /* Hide SEO section */
+  section { display: none; }
+}
+
+/* ── MOBILE ── */
+@media(max-width: 640px) {
+  body { overflow: auto; height: auto; }
+  .split { grid-template-columns: 1fr; }
+  .right { min-height: 400px; }
+  .ba { flex-direction: column; }
+  .ba-right { flex-direction: row; align-items: flex-start; }
+  .sg3 { grid-template-columns: repeat(2, 1fr); }
+  .tb-signin { display: none; }
+  .tb-feedback { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- SEO: crawler-visible heading — visually hidden -->
+<h1 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap">Reading Fluency Tracker — Free WCPM Progress Monitoring for Reading Coaches</h1>
+
+<div id="app-shell" style="height:100dvh;display:flex;flex-direction:column;flex-shrink:0">
+
+<!-- TOPBAR -->
+<div class="tb">
+  <div class="logo">reading<b>coach</b><span>kit</span></div>
+  <div class="tb-r">
+    <a href="#" class="tb-signin">Sign in</a>
+    <a href="#" class="tb-cta">Free account</a>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab on" onclick="showTab('fluency',this)"><span class="tab-n">01</span>Fluency Tracker</button>
+  <button class="tab tab-soon"><span class="tab-n">02</span>Group Planner</button>
+  <button class="tab tab-soon"><span class="tab-n">03</span>Running Record</button>
+  <button class="tab tab-soon"><span class="tab-n">04</span>Word Generator</button>
+  <button class="tab tab-soon"><span class="tab-n">05</span>Sight Words</button>
+  <button class="tab tab-soon"><span class="tab-n">06</span>Benchmark Check</button>
+  <a href="#" class="tb-feedback" onclick="document.getElementById('feedback-modal').classList.add('open');return false">Missing something?</a>
+</div>
+
+<!-- PANELS -->
+<div class="panels">
+
+  <!-- PANEL: FLUENCY TRACKER -->
+  <div class="panel on" id="panel-fluency">
+    <div class="split">
+
+      <!-- LEFT: INPUTS -->
+      <div class="left">
+        <div class="lh">
+          <div class="lh-q">Which students need fluency support?</div>
+          <div class="lh-hint">Enter WCPM scores to track progress and compare to grade-level benchmarks.</div>
+        </div>
+        <div class="lbody">
+
+          <!-- Student name -->
+          <div class="fi">
+            <label>Student name or ID</label>
+            <div class="fi-note">Use initials or a number — no real names needed.</div>
+            <div class="fi-in">
+              <input type="text" id="studentName" placeholder="e.g. Student 4 or MJ" oninput="updateResults()" maxlength="40">
+            </div>
+          </div>
+
+          <!-- Grade -->
+          <div class="fi">
+            <label>Grade level</label>
+            <div class="grade-btns">
+              <button class="gb on" onclick="setGrade('1',this)">1</button>
+              <button class="gb" onclick="setGrade('2',this)">2</button>
+              <button class="gb" onclick="setGrade('3',this)">3</button>
+              <button class="gb" onclick="setGrade('4',this)">4</button>
+              <button class="gb" onclick="setGrade('5',this)">5</button>
+              <button class="gb" onclick="setGrade('6',this)">6</button>
+            </div>
+            <div class="fi-note" id="gradeNormNote" style="margin-top:4px"></div>
+          </div>
+
+          <!-- Assessment period -->
+          <div class="fi">
+            <label>Assessment period</label>
+            <div class="period-btns">
+              <button class="pb" onclick="setPeriod('fall',this)">Fall</button>
+              <button class="pb on" onclick="setPeriod('winter',this)">Winter</button>
+              <button class="pb" onclick="setPeriod('spring',this)">Spring</button>
+            </div>
+          </div>
+
+          <!-- WCPM scores -->
+          <div class="fi">
+            <label>WCPM scores over time</label>
+            <div class="score-header">
+              <div class="score-col-lbl">Date</div>
+              <div class="score-col-lbl">WCPM</div>
+              <div></div>
+            </div>
+            <div class="score-list" id="scoreList"></div>
+            <button class="add-score-btn" onclick="addScoreRow()">+ Add another score</button>
+          </div>
+
+          <!-- Privacy note -->
+          <div class="privacy-note">
+            <span class="privacy-note-icon">🔒</span>
+            <div><strong>Your student data never leaves this device.</strong> Nothing is stored or transmitted — not scores, not names, not initials. All calculations happen in your browser only.</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- RIGHT: RESULTS -->
+      <div class="right">
+        <div class="rh">
+          <div class="rh-label">Fluency Analysis</div>
+          <div class="live-dot">Updates live</div>
+        </div>
+
+        <!-- Results body -->
+        <div class="rbody" id="resultsBody">
+          <!-- Empty state shown until input -->
+          <div class="empty-state" id="emptyState">
+            <div class="empty-icon">📖</div>
+            <div class="empty-title">Enter a student's WCPM scores</div>
+            <div class="empty-sub">Add at least one score to see benchmark comparison, trend analysis, and intervention recommendations.</div>
+          </div>
+
+          <!-- Results (hidden until data) -->
+          <div id="resultsContent" style="display:none">
+
+            <!-- Big answer: most recent WCPM -->
+            <div class="ba">
+              <div>
+                <div class="ba-lbl">Most recent WCPM</div>
+                <div class="ba-val" id="latestWcpm">—</div>
+                <div class="ba-sub" id="latestDate">—</div>
+              </div>
+              <div class="ba-right">
+                <div>
+                  <div class="ba-stat-lbl">50th percentile target</div>
+                  <div class="ba-stat-val" id="normTarget">—</div>
+                </div>
+                <div>
+                  <div class="ba-stat-lbl">Gap from target</div>
+                  <div class="ba-stat-val" id="gapFromTarget">—</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stat grid -->
+            <div class="sg3">
+              <div class="sc">
+                <div class="sc-lbl">Scores entered</div>
+                <div class="sc-val" id="scoresCount">—</div>
+              </div>
+              <div class="sc">
+                <div class="sc-lbl">Growth (first → last)</div>
+                <div class="sc-val" id="growthVal">—</div>
+              </div>
+              <div class="sc">
+                <div class="sc-lbl">Weekly rate</div>
+                <div class="sc-val" id="weeklyRate">—</div>
+              </div>
+            </div>
+
+            <!-- Benchmark bar -->
+            <div class="bench-bar-wrap">
+              <div class="bench-bar-title">WCPM vs. Hasbrouck-Tindal Norms</div>
+              <div class="bench-bar-track" id="benchBarTrack">
+                <div class="bench-bar-fill" id="benchBarFill" style="width:0%"></div>
+                <div class="bench-marker" id="p25marker" style="left:40%">
+                  <span class="bench-marker-lbl">25th</span>
+                </div>
+                <div class="bench-marker" id="p50marker" style="left:65%">
+                  <span class="bench-marker-lbl">50th</span>
+                </div>
+                <div class="bench-marker" id="p75marker" style="left:82%">
+                  <span class="bench-marker-lbl">75th</span>
+                </div>
+              </div>
+              <div class="bench-labels">
+                <span>0 WCPM</span>
+                <span id="benchMaxLabel">200 WCPM</span>
+              </div>
+            </div>
+
+            <!-- Trend chart -->
+            <div class="chart-wrap">
+              <div class="chart-title">Progress over time</div>
+              <canvas id="fluencyChart"></canvas>
+            </div>
+
+            <!-- Breakdown table -->
+            <div class="bk">
+              <div class="bk-r hi">
+                <span class="bk-lbl">Grade / Period</span>
+                <span class="bk-val" id="bkGradePeriod">—</span>
+              </div>
+              <div class="bk-r">
+                <span class="bk-lbl">25th percentile (at-risk threshold)</span>
+                <span class="bk-val" id="bkP25">—</span>
+              </div>
+              <div class="bk-r">
+                <span class="bk-lbl">50th percentile (benchmark)</span>
+                <span class="bk-val" id="bkP50">—</span>
+              </div>
+              <div class="bk-r">
+                <span class="bk-lbl">75th percentile</span>
+                <span class="bk-val" id="bkP75">—</span>
+              </div>
+              <div class="bk-r hi">
+                <span class="bk-lbl">Student's most recent score</span>
+                <span class="bk-val" id="bkLatest">—</span>
+              </div>
+              <div class="bk-r">
+                <span class="bk-lbl">Words per week needed to reach 50th</span>
+                <span class="bk-val" id="bkWeeksNeeded">—</span>
+              </div>
+            </div>
+
+            <!-- Verdict -->
+            <div class="verdict" id="verdictBox">
+              <div class="vdot"></div>
+              <span id="verdictText">—</span>
+            </div>
+
+            <!-- Recommendation -->
+            <div class="rec" id="recBox">—</div>
+
+          </div><!-- /resultsContent -->
+        </div><!-- /rbody -->
+
+        <!-- Sponsor slot -->
+        <div class="sponsor-slot">
+          <div class="sponsor-label">
+            <span>Curriculum Partner</span>
+            <span>Sponsored</span>
+          </div>
+          <div class="sponsor-inner">
+            <div class="sponsor-logo">Heggerty</div>
+            <div class="sponsor-copy">
+              <div class="sponsor-head">Phonemic awareness curriculum aligned with Science of Reading</div>
+              <div class="sponsor-sub">Used by 300,000+ teachers across the US</div>
+            </div>
+            <button class="sponsor-cta">Learn more</button>
+          </div>
+        </div>
+
+        <!-- Gate bar -->
+        <div class="gate">
+          <div class="gate-btns">
+            <button class="g-primary" onclick="openExportModal()">Export Progress Report PDF</button>
+            <button class="g-sec" onclick="clearAll()">Clear</button>
+          </div>
+          <div class="gate-note">Free to use · Enter your email to save or download the PDF report</div>
+        </div>
+
+      </div><!-- /right -->
+    </div><!-- /split -->
+  </div><!-- /panel-fluency -->
+
+</div><!-- /panels -->
+</div><!-- /app-shell -->
+
+
+<!-- ── EXPORT MODAL ── -->
+<div class="modal-bg" id="export-modal">
+  <div class="modal">
+    <div id="exportFormState">
+      <h3>Save your progress report</h3>
+      <p>Enter your email to download the PDF and receive a copy. We'll also send you occasional tool updates — unsubscribe anytime.</p>
+      <input type="email" id="exportEmail" placeholder="your@email.com">
+      <select id="exportState" style="width:100%;height:44px;border:1px solid rgba(30,45,61,0.22);border-radius:3px;padding:0 14px;font-family:var(--sans);font-size:14px;color:var(--text);background:#fff;outline:none;margin-bottom:10px;-webkit-appearance:none;">
+        <option value="">What state do you teach in? (optional)</option>
+        <option>Alabama</option><option>Alaska</option><option>Arizona</option><option>Arkansas</option>
+        <option>California</option><option>Colorado</option><option>Connecticut</option><option>Delaware</option>
+        <option>Florida</option><option>Georgia</option><option>Hawaii</option><option>Idaho</option>
+        <option>Illinois</option><option>Indiana</option><option>Iowa</option><option>Kansas</option>
+        <option>Kentucky</option><option>Louisiana</option><option>Maine</option><option>Maryland</option>
+        <option>Massachusetts</option><option>Michigan</option><option>Minnesota</option><option>Mississippi</option>
+        <option>Missouri</option><option>Montana</option><option>Nebraska</option><option>Nevada</option>
+        <option>New Hampshire</option><option>New Jersey</option><option>New Mexico</option><option>New York</option>
+        <option>North Carolina</option><option>North Dakota</option><option>Ohio</option><option>Oklahoma</option>
+        <option>Oregon</option><option>Pennsylvania</option><option>Rhode Island</option><option>South Carolina</option>
+        <option>South Dakota</option><option>Tennessee</option><option>Texas</option><option>Utah</option>
+        <option>Vermont</option><option>Virginia</option><option>Washington</option><option>West Virginia</option>
+        <option>Wisconsin</option><option>Wyoming</option>
+      </select>
+      <div class="modal-note">🔒 We'll include state literacy funding updates if you choose one. Optional.</div>
+      <div class="modal-btns">
+        <button class="modal-send" onclick="submitExport()">Download PDF →</button>
+        <button class="modal-cancel" onclick="document.getElementById('export-modal').classList.remove('open')">Cancel</button>
+      </div>
+    </div>
+    <div id="exportSuccessState" class="modal-success" style="display:none">
+      <div class="check">✅</div>
+      <h4>Your report is downloading</h4>
+      <p>We've also sent a copy to your inbox. Welcome to readingcoachkit.</p>
+      <button class="modal-send" onclick="document.getElementById('export-modal').classList.remove('open');document.getElementById('exportSuccessState').style.display='none';document.getElementById('exportFormState').style.display='block'">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── FEEDBACK MODAL ── -->
+<div class="modal-bg" id="feedback-modal">
+  <div class="modal">
+    <h3>What's missing?</h3>
+    <p>Tell us what you'd find useful — a tool you need, a feature that's not here, or something that felt off.</p>
+    <textarea placeholder="e.g. I need a running record calculator that saves student history..."></textarea>
+    <div class="modal-btns">
+      <button class="modal-send" onclick="document.getElementById('feedback-modal').classList.remove('open')">Send feedback</button>
+      <button class="modal-cancel" onclick="document.getElementById('feedback-modal').classList.remove('open')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── JAVASCRIPT ── -->
+<script>
+// ── HASBROUCK-TINDAL NORMS (2017) ──
+// Source: Hasbrouck, J. & Tindal, G. (2017). An Update to Compiled ORF Norms.
+// Technical Report #1702, Behavioral Research and Teaching, University of Oregon.
+// https://brtprojects.org / https://www.readnaturally.com/article/hasbrouck-tindal-oral-reading-fluency-data-2017
+//
+// IMPORTANT NOTES:
+// - 2017 norms cover Grades 1–6 only. No kindergarten data exists in this norm set.
+// - Grade 1 has NO fall norms (students are not yet reading grade-level passages in fall of 1st grade).
+// - null = no norm data available for that grade/period combination.
+// Format: norms[grade][period] = { p10, p25, p50, p75, p90 } or null
+
+const NORMS = {
+  '1': {
+    fall:   null,
+    winter: { p10: 9,   p25: 16,  p50: 29,  p75: 59,  p90: 97  },
+    spring: { p10: 18,  p25: 34,  p50: 60,  p75: 91,  p90: 116 }
+  },
+  '2': {
+    fall:   { p10: 23,  p25: 36,  p50: 50,  p75: 84,  p90: 111 },
+    winter: { p10: 35,  p25: 59,  p50: 84,  p75: 109, p90: 131 },
+    spring: { p10: 43,  p25: 72,  p50: 100, p75: 124, p90: 148 }
+  },
+  '3': {
+    fall:   { p10: 40,  p25: 59,  p50: 83,  p75: 104, p90: 134 },
+    winter: { p10: 62,  p25: 79,  p50: 97,  p75: 137, p90: 161 },
+    spring: { p10: 63,  p25: 91,  p50: 112, p75: 139, p90: 166 }
+  },
+  '4': {
+    fall:   { p10: 60,  p25: 75,  p50: 94,  p75: 125, p90: 153 },
+    winter: { p10: 71,  p25: 95,  p50: 120, p75: 143, p90: 168 },
+    spring: { p10: 83,  p25: 105, p50: 133, p75: 160, p90: 184 }
+  },
+  '5': {
+    fall:   { p10: 64,  p25: 87,  p50: 121, p75: 153, p90: 179 },
+    winter: { p10: 84,  p25: 109, p50: 133, p75: 160, p90: 183 },
+    spring: { p10: 102, p25: 119, p50: 146, p75: 169, p90: 195 }
+  },
+  '6': {
+    fall:   { p10: 89,  p25: 112, p50: 132, p75: 159, p90: 185 },
+    winter: { p10: 91,  p25: 116, p50: 145, p75: 166, p90: 195 },
+    spring: { p10: 91,  p25: 122, p50: 146, p75: 173, p90: 204 }
+  }
+};
+
+// ── STATE ──
+let selectedGrade = '1';
+let selectedPeriod = 'winter';
+let scoreRows = [];
+let rowIdCounter = 0;
+let chartInstance = null;
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', () => {
+  addScoreRow();
+  addScoreRow();
+});
+
+// ── GRADE / PERIOD SELECTORS ──
+function setGrade(g, btn) {
+  selectedGrade = g;
+  document.querySelectorAll('.gb').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  updateResults();
+}
+function setPeriod(p, btn) {
+  selectedPeriod = p;
+  document.querySelectorAll('.pb').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  updateResults();
+}
+
+// ── SCORE ROWS ──
+function addScoreRow() {
+  const id = rowIdCounter++;
+  scoreRows.push(id);
+  const list = document.getElementById('scoreList');
+  const row = document.createElement('div');
+  row.className = 'score-row';
+  row.id = 'row-' + id;
+  row.innerHTML = `
+    <input type="date" id="date-${id}" onchange="updateResults()">
+    <input type="number" id="wcpm-${id}" placeholder="WCPM" min="0" max="300" oninput="updateResults()">
+    <button class="score-del" onclick="removeRow(${id})" title="Remove">×</button>
+  `;
+  list.appendChild(row);
+  // Set today's date as default for new rows
+  const today = new Date().toISOString().split('T')[0];
+  row.querySelector('input[type="date"]').value = today;
+}
+
+function removeRow(id) {
+  const row = document.getElementById('row-' + id);
+  if (row) row.remove();
+  scoreRows = scoreRows.filter(r => r !== id);
+  updateResults();
+}
+
+function clearAll() {
+  document.getElementById('studentName').value = '';
+  document.getElementById('scoreList').innerHTML = '';
+  scoreRows = [];
+  rowIdCounter = 0;
+  addScoreRow();
+  addScoreRow();
+  updateResults();
+}
+
+// ── COLLECT DATA ──
+function getScoreData() {
+  const entries = [];
+  scoreRows.forEach(id => {
+    const dateEl = document.getElementById('date-' + id);
+    const wcpmEl = document.getElementById('wcpm-' + id);
+    if (!dateEl || !wcpmEl) return;
+    const d = dateEl.value;
+    const w = parseFloat(wcpmEl.value);
+    if (d && !isNaN(w) && w >= 0) {
+      entries.push({ date: d, wcpm: Math.round(w) });
+    }
+  });
+  entries.sort((a, b) => a.date.localeCompare(b.date));
+  return entries;
+}
+
+// ── MAIN UPDATE FUNCTION ──
+function updateResults() {
+  const entries = getScoreData();
+  const name = document.getElementById('studentName').value.trim() || 'Student';
+  const norm = NORMS[selectedGrade]?.[selectedPeriod];
+
+  // Update grade norm note
+  const noteEl = document.getElementById('gradeNormNote');
+  if (noteEl) {
+    if (selectedGrade === '1' && selectedPeriod === 'fall') {
+      noteEl.textContent = 'No fall norms for Grade 1 — students are not yet reading grade-level passages in fall of 1st grade. Switch to Winter or Spring.';
+      noteEl.style.color = 'var(--amber)';
+    } else {
+      noteEl.textContent = 'Norms: Hasbrouck-Tindal 2017 (Grades 1–6)';
+      noteEl.style.color = 'var(--text3)';
+    }
+  }
+
+  if (entries.length === 0 || !norm) {
+    document.getElementById('emptyState').style.display = 'flex';
+    document.getElementById('resultsContent').style.display = 'none';
+    // Update empty state message for no-norm case
+    const emptySub = document.querySelector('.empty-sub');
+    if (!norm && entries.length > 0) {
+      emptySub.textContent = 'No Hasbrouck-Tindal norms are available for Grade 1 Fall. Switch to Winter or Spring to see benchmark comparisons.';
+    } else {
+      emptySub.textContent = 'Add at least one score to see benchmark comparison, trend analysis, and intervention recommendations.';
+    }
+    return;
+  }
+
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('resultsContent').style.display = 'block';
+
+  const latest = entries[entries.length - 1];
+  const first = entries[0];
+
+  // Big answer
+  document.getElementById('latestWcpm').textContent = latest.wcpm + ' WCPM';
+  document.getElementById('latestDate').textContent = formatDate(latest.date);
+  document.getElementById('normTarget').textContent = norm.p50 + ' WCPM';
+
+  const gap = latest.wcpm - norm.p50;
+  const gapEl = document.getElementById('gapFromTarget');
+  if (gap >= 0) {
+    gapEl.textContent = '+' + gap + ' above';
+    gapEl.style.color = 'var(--green)';
+  } else {
+    gapEl.textContent = Math.abs(gap) + ' below';
+    gapEl.style.color = 'var(--red)';
+  }
+
+  // Stat grid
+  document.getElementById('scoresCount').textContent = entries.length;
+
+  const growth = latest.wcpm - first.wcpm;
+  const growthEl = document.getElementById('growthVal');
+  if (entries.length > 1) {
+    growthEl.textContent = (growth >= 0 ? '+' : '') + growth + ' WCPM';
+    growthEl.className = 'sc-val ' + (growth > 0 ? 'g' : growth < 0 ? 'r' : '');
+  } else {
+    growthEl.textContent = '—';
+    growthEl.className = 'sc-val';
+  }
+
+  // Weekly rate
+  if (entries.length >= 2) {
+    const firstDate = new Date(first.date);
+    const lastDate = new Date(latest.date);
+    const weeks = Math.max(1, (lastDate - firstDate) / (7 * 24 * 60 * 60 * 1000));
+    const rate = (growth / weeks).toFixed(1);
+    const rateEl = document.getElementById('weeklyRate');
+    rateEl.textContent = (rate >= 0 ? '+' : '') + rate + '/wk';
+    rateEl.className = 'sc-val ' + (rate > 0 ? 'g' : rate < 0 ? 'r' : '');
+  } else {
+    document.getElementById('weeklyRate').textContent = '—';
+  }
+
+  // Benchmark bar
+  const maxWcpm = Math.max(norm.p90 * 1.15, 200);
+  document.getElementById('benchMaxLabel').textContent = Math.round(maxWcpm) + ' WCPM';
+  const fillPct = Math.min(100, (latest.wcpm / maxWcpm) * 100);
+  const fillEl = document.getElementById('benchBarFill');
+  fillEl.style.width = fillPct + '%';
+
+  // Color the fill
+  if (latest.wcpm >= norm.p50) fillEl.className = 'bench-bar-fill g';
+  else if (latest.wcpm >= norm.p25) fillEl.className = 'bench-bar-fill a';
+  else fillEl.className = 'bench-bar-fill r';
+
+  // Position percentile markers
+  document.getElementById('p25marker').style.left = ((norm.p25 / maxWcpm) * 100) + '%';
+  document.getElementById('p50marker').style.left = ((norm.p50 / maxWcpm) * 100) + '%';
+  document.getElementById('p75marker').style.left = ((norm.p75 / maxWcpm) * 100) + '%';
+
+  // Breakdown table
+  document.getElementById('bkGradePeriod').textContent = 'Grade ' + selectedGrade + ' · ' + capitalize(selectedPeriod);
+  document.getElementById('bkP25').textContent = norm.p25 + ' WCPM';
+  document.getElementById('bkP50').textContent = norm.p50 + ' WCPM';
+  document.getElementById('bkP75').textContent = norm.p75 + ' WCPM';
+  document.getElementById('bkLatest').textContent = latest.wcpm + ' WCPM';
+
+  // Weeks needed to reach 50th percentile
+  if (latest.wcpm < norm.p50 && entries.length >= 2) {
+    const firstDate = new Date(first.date);
+    const lastDate = new Date(latest.date);
+    const weeks = Math.max(1, (lastDate - firstDate) / (7 * 24 * 60 * 60 * 1000));
+    const weeklyGrowth = growth / weeks;
+    if (weeklyGrowth > 0) {
+      const weeksToTarget = Math.ceil((norm.p50 - latest.wcpm) / weeklyGrowth);
+      document.getElementById('bkWeeksNeeded').textContent = weeksToTarget + ' weeks at current rate';
+    } else {
+      document.getElementById('bkWeeksNeeded').textContent = 'Not trending up';
+    }
+  } else if (latest.wcpm >= norm.p50) {
+    document.getElementById('bkWeeksNeeded').textContent = 'At or above benchmark ✓';
+  } else {
+    document.getElementById('bkWeeksNeeded').textContent = 'Add more scores to calculate';
+  }
+
+  // Verdict
+  const verdictBox = document.getElementById('verdictBox');
+  const verdictText = document.getElementById('verdictText');
+  if (latest.wcpm >= norm.p50) {
+    verdictBox.className = 'verdict on-track';
+    verdictText.textContent = 'On Track — at or above the 50th percentile benchmark for ' + gradeLabel(selectedGrade) + ' ' + capitalize(selectedPeriod);
+  } else if (latest.wcpm >= norm.p25) {
+    verdictBox.className = 'verdict monitor';
+    verdictText.textContent = 'Monitor — below the 50th percentile, but above the at-risk threshold (25th percentile)';
+  } else {
+    verdictBox.className = 'verdict at-risk';
+    verdictText.textContent = 'At Risk — below the 25th percentile; additional fluency support is recommended';
+  }
+
+  // Recommendation
+  const recBox = document.getElementById('recBox');
+  if (latest.wcpm >= norm.p75) {
+    recBox.innerHTML = `<strong>${name}</strong> is performing above the 75th percentile. Continue current instruction and monitor at the next assessment window.`;
+  } else if (latest.wcpm >= norm.p50) {
+    recBox.innerHTML = `<strong>${name}</strong> is at or above the benchmark. Continue current Tier 1 instruction. Reassess at the next benchmark period to confirm trajectory.`;
+  } else if (latest.wcpm >= norm.p25) {
+    recBox.innerHTML = `<strong>${name}</strong> is below the 50th percentile benchmark but above the at-risk threshold. Consider increased Tier 1 support — repeated reading practice with corrective feedback, targeting 15–20 minutes daily. Monitor every 2 weeks.`;
+  } else {
+    const deficit = norm.p50 - latest.wcpm;
+    recBox.innerHTML = `<strong>${name}</strong> is ${deficit} WCPM below the 50th percentile benchmark and below the 25th percentile at-risk threshold. Tier 2 or Tier 3 intervention is recommended. Consider daily 20–30 minute fluency-focused instruction using decodable text at the student's instructional level. Reassess every 2 weeks to verify response to intervention.`;
+  }
+
+  // Chart
+  renderChart(entries, norm);
+}
+
+// ── CHART ──
+function renderChart(entries, norm) {
+  const canvas = document.getElementById('fluencyChart');
+  if (!canvas) return;
+
+  const ctx = canvas.getContext('2d');
+
+  if (chartInstance) {
+    chartInstance.destroy();
+    chartInstance = null;
+  }
+
+  if (entries.length === 0) return;
+
+  const labels = entries.map(e => formatDate(e.date));
+  const scores = entries.map(e => e.wcpm);
+
+  // Simple canvas chart (no external library needed)
+  const W = canvas.offsetWidth || 500;
+  const H = 160;
+  canvas.width = W;
+  canvas.height = H;
+
+  const pad = { top: 10, right: 20, bottom: 30, left: 40 };
+  const chartW = W - pad.left - pad.right;
+  const chartH = H - pad.top - pad.bottom;
+
+  ctx.clearRect(0, 0, W, H);
+
+  const allVals = [...scores, norm.p25, norm.p50, norm.p75];
+  const minVal = 0;
+  const maxVal = Math.max(...allVals) * 1.2;
+
+  function xPos(i) {
+    if (entries.length === 1) return pad.left + chartW / 2;
+    return pad.left + (i / (entries.length - 1)) * chartW;
+  }
+  function yPos(v) {
+    return pad.top + chartH - ((v - minVal) / (maxVal - minVal)) * chartH;
+  }
+
+  // Draw norm lines
+  const normLines = [
+    { val: norm.p25, color: 'rgba(192,57,43,0.25)', label: '25th' },
+    { val: norm.p50, color: 'rgba(46,125,79,0.35)', label: '50th' },
+    { val: norm.p75, color: 'rgba(45,74,107,0.2)', label: '75th' },
+  ];
+  normLines.forEach(({ val, color, label }) => {
+    const y = yPos(val);
+    ctx.beginPath();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4, 3]);
+    ctx.moveTo(pad.left, y);
+    ctx.lineTo(pad.left + chartW, y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = 'rgba(30,45,61,0.45)';
+    ctx.font = '9px DM Mono, monospace';
+    ctx.fillText(label, pad.left + chartW + 2, y + 3);
+  });
+
+  // Draw grid lines
+  for (let i = 0; i <= 4; i++) {
+    const v = minVal + (i / 4) * (maxVal - minVal);
+    const y = yPos(v);
+    ctx.beginPath();
+    ctx.strokeStyle = 'rgba(30,45,61,0.07)';
+    ctx.lineWidth = 1;
+    ctx.moveTo(pad.left, y);
+    ctx.lineTo(pad.left + chartW, y);
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(30,45,61,0.4)';
+    ctx.font = '9px DM Mono, monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText(Math.round(v), pad.left - 4, y + 3);
+  }
+  ctx.textAlign = 'left';
+
+  // Draw fill under line
+  if (entries.length > 1) {
+    ctx.beginPath();
+    ctx.moveTo(xPos(0), yPos(scores[0]));
+    for (let i = 1; i < entries.length; i++) ctx.lineTo(xPos(i), yPos(scores[i]));
+    ctx.lineTo(xPos(entries.length - 1), pad.top + chartH);
+    ctx.lineTo(xPos(0), pad.top + chartH);
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(45,74,107,0.07)';
+    ctx.fill();
+  }
+
+  // Draw line
+  if (entries.length > 1) {
+    ctx.beginPath();
+    ctx.strokeStyle = '#2D4A6B';
+    ctx.lineWidth = 2;
+    ctx.lineJoin = 'round';
+    ctx.moveTo(xPos(0), yPos(scores[0]));
+    for (let i = 1; i < entries.length; i++) ctx.lineTo(xPos(i), yPos(scores[i]));
+    ctx.stroke();
+  }
+
+  // Draw data points
+  entries.forEach((e, i) => {
+    const x = xPos(i);
+    const y = yPos(e.wcpm);
+    ctx.beginPath();
+    ctx.arc(x, y, 4, 0, Math.PI * 2);
+    ctx.fillStyle = e.wcpm >= norm.p50 ? '#2E7D4F' : e.wcpm >= norm.p25 ? '#8B6914' : '#C0392B';
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  });
+
+  // X-axis labels
+  ctx.fillStyle = 'rgba(30,45,61,0.45)';
+  ctx.font = '9px DM Sans, sans-serif';
+  ctx.textAlign = 'center';
+  if (entries.length <= 6) {
+    entries.forEach((e, i) => {
+      ctx.fillText(formatDateShort(e.date), xPos(i), H - 6);
+    });
+  } else {
+    // Show first, middle, last
+    [0, Math.floor(entries.length / 2), entries.length - 1].forEach(i => {
+      ctx.fillText(formatDateShort(entries[i].date), xPos(i), H - 6);
+    });
+  }
+}
+
+// ── TAB SWITCHING ──
+function showTab(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  const panel = document.getElementById('panel-' + id);
+  if (panel) panel.classList.add('on');
+  if (btn) btn.classList.add('on');
+}
+
+// ── EXPORT MODAL ──
+function openExportModal() {
+  const entries = getScoreData();
+  if (entries.length === 0) {
+    alert('Add at least one WCPM score before exporting.');
+    return;
+  }
+  document.getElementById('export-modal').classList.add('open');
+}
+
+async function submitExport() {
+  const email = document.getElementById('exportEmail').value.trim();
+  if (!email || !email.includes('@')) {
+    document.getElementById('exportEmail').focus();
+    document.getElementById('exportEmail').style.borderColor = 'var(--red)';
+    return;
+  }
+  document.getElementById('exportEmail').style.borderColor = '';
+
+  const state = document.getElementById('exportState').value;
+  const sendBtn = document.querySelector('.modal-send');
+
+  // Show loading state
+  sendBtn.disabled = true;
+  sendBtn.textContent = 'Sending…';
+
+  try {
+    const res = await fetch('/api/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, state: state || null })
+    });
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.error || 'Server error');
+    }
+
+    // Success — show confirmation state then trigger print
+    document.getElementById('exportFormState').style.display = 'none';
+    document.getElementById('exportSuccessState').style.display = 'block';
+
+    // Short delay so modal can close before print dialog opens
+    setTimeout(() => {
+      document.getElementById('export-modal').classList.remove('open');
+      document.getElementById('exportSuccessState').style.display = 'none';
+      document.getElementById('exportFormState').style.display = 'block';
+      window.print();
+    }, 1800);
+
+  } catch (err) {
+    console.error('Export error:', err);
+    sendBtn.disabled = false;
+    sendBtn.textContent = 'Download PDF →';
+    // Show inline error
+    let errEl = document.getElementById('exportError');
+    if (!errEl) {
+      errEl = document.createElement('p');
+      errEl.id = 'exportError';
+      errEl.style.cssText = 'color:var(--red);font-size:13px;margin:-4px 0 10px;';
+      sendBtn.closest('.modal-btns').before(errEl);
+    }
+    errEl.textContent = 'Something went wrong — please try again.';
+  }
+}
+
+// ── HELPERS ──
+function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+function gradeLabel(g) { return g === 'K' ? 'Kindergarten' : 'Grade ' + g; }
+function formatDate(d) {
+  if (!d) return '—';
+  const [y, m, day] = d.split('-');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return months[parseInt(m) - 1] + ' ' + parseInt(day) + ', ' + y;
+}
+function formatDateShort(d) {
+  if (!d) return '';
+  const [y, m, day] = d.split('-');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return months[parseInt(m) - 1] + ' ' + parseInt(day);
+}
+</script>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     STATIC SEO CONTENT — crawler-visible, below app shell
+     ══════════════════════════════════════════════════════════════ -->
+<section style="max-width:760px;margin:0 auto;padding:48px 24px 64px;font-family:'DM Sans',sans-serif;color:#1E2D3D">
+
+  <h2 style="font-family:'DM Serif Display',Georgia,serif;font-size:26px;font-weight:400;color:#1E2D3D;margin-bottom:16px;line-height:1.3">
+    How to track reading fluency progress — WCPM benchmarks explained
+  </h2>
+
+  <p style="font-size:15px;line-height:1.7;color:#4A5A6B;margin-bottom:16px">
+    A <strong>reading fluency tracker</strong> helps coaches and teachers monitor a student's Words Correct Per Minute (WCPM) over time and compare it to grade-level norms. The most widely used benchmark is the <strong>Hasbrouck-Tindal Oral Reading Fluency norms</strong> — research-based percentile data published for grades K through 8, measured in fall, winter, and spring. When a student's WCPM falls below the 25th percentile, that's a clear signal that additional fluency intervention is warranted.
+  </p>
+
+  <p style="font-size:15px;line-height:1.7;color:#4A5A6B;margin-bottom:16px">
+    This tool embeds the full 2017 Hasbrouck-Tindal norms and automatically places each student's score at the right percentile. Enter any number of assessment scores across different dates — the tool plots a trend line, calculates weekly growth rate, and tells you whether the student is on track, needs monitoring, or is at risk.
+  </p>
+
+  <h3 style="font-family:'DM Serif Display',Georgia,serif;font-size:20px;font-weight:400;color:#1E2D3D;margin:28px 0 12px">
+    Hasbrouck-Tindal WCPM norms — 50th percentile benchmarks by grade
+  </h3>
+
+  <table style="width:100%;border-collapse:collapse;font-size:14px;margin-bottom:24px">
+    <thead>
+      <tr style="background:#F0EDE8">
+        <th style="text-align:left;padding:8px 12px;font-weight:600;color:#2D4A6B;border-bottom:2px solid #DDD9D0">Grade</th>
+        <th style="text-align:center;padding:8px 12px;font-weight:600;color:#2D4A6B;border-bottom:2px solid #DDD9D0">Fall (50th %ile)</th>
+        <th style="text-align:center;padding:8px 12px;font-weight:600;color:#2D4A6B;border-bottom:2px solid #DDD9D0">Winter (50th %ile)</th>
+        <th style="text-align:center;padding:8px 12px;font-weight:600;color:#2D4A6B;border-bottom:2px solid #DDD9D0">Spring (50th %ile)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td style="padding:7px 12px;border-bottom:1px solid #EAE6E0">1</td><td style="text-align:center;padding:7px 12px;border-bottom:1px solid #EAE6E0;color:#8A9AAB;font-style:italic">— (no fall norms)</td><td style="text-align:center;padding:7px 12px;border-bottom:1px solid #EAE6E0">29</td><td style="text-align:center;padding:7px 12px;border-bottom:1px solid #EAE6E0">60</td></tr>
+      <tr style="background:#FAFAF7"><td style="padding:7px 12px;border-bottom:1px solid #EAE6E0">2</td><td style="text-align:center;padding:7px 12px;border-bottom:1px solid #EAE6E0">50</td><td style="text-align:center;padding:7px 12px;border-bottom:1px solid #EAE6E0">84</td><td style="text-align:center;padding:7px 12px;border-bottom:1px solid #EAE6E0">100</td></tr>
+      <tr><td style="padding:7px 12px;border-bottom:1px solid #EAE6E0">3</td><td style="text-align:center;padding:7px 12px;border-bottom:1px solid #EAE6E0">83</td><td style="text-align:center;padding:7px 12px;border-bottom:1px solid #EAE6E0">97</td><td style="text-align:center;padding:7px 12px;border-bottom:1px solid #EAE6E0">112</td></tr>
+      <tr style="background:#FAFAF7"><td style="padding:7px 12px;border-bottom:1px solid #EAE6E0">4</td><td style="text-align:center;padding:7px 12px;border-bottom:1px solid #EAE6E0">94</td><td style="text-align:center;padding:7px 12px;border-bottom:1px solid #EAE6E0">120</td><td style="text-align:center;padding:7px 12px;border-bottom:1px solid #EAE6E0">133</td></tr>
+      <tr><td style="padding:7px 12px;border-bottom:1px solid #EAE6E0">5</td><td style="text-align:center;padding:7px 12px;border-bottom:1px solid #EAE6E0">121</td><td style="text-align:center;padding:7px 12px;border-bottom:1px solid #EAE6E0">133</td><td style="text-align:center;padding:7px 12px;border-bottom:1px solid #EAE6E0">146</td></tr>
+      <tr style="background:#FAFAF7"><td style="padding:7px 12px">6</td><td style="text-align:center;padding:7px 12px">132</td><td style="text-align:center;padding:7px 12px">145</td><td style="text-align:center;padding:7px 12px">146</td></tr>
+    </tbody>
+  </table>
+
+  <p style="font-size:13px;color:#8A9AAB;margin-bottom:28px;font-style:italic">
+    Source: Hasbrouck, J. &amp; Tindal, G. (2017). An update to compiled ORF norms. Eugene, OR: Behavioral Research and Teaching, University of Oregon.
+  </p>
+
+  <h3 style="font-family:'DM Serif Display',Georgia,serif;font-size:20px;font-weight:400;color:#1E2D3D;margin:0 0 12px">Frequently asked questions</h3>
+
+  <div style="border:1px solid #DDD9D0;border-radius:4px;overflow:hidden;margin-bottom:24px">
+    <div style="padding:14px 18px;border-bottom:1px solid #DDD9D0">
+      <div style="font-size:14px;font-weight:600;color:#1E2D3D;margin-bottom:6px">What WCPM score is on grade level for a 2nd grader in the winter?</div>
+      <div style="font-size:14px;color:#4A5A6B;line-height:1.6">The 50th percentile benchmark for Grade 2 in winter is <strong>97 WCPM</strong>. A student scoring 78 WCPM or below is at the 25th percentile (at-risk threshold). A student at or above 116 WCPM is at the 75th percentile. These norms assume a one-minute oral reading fluency assessment using a grade-level passage.</div>
+    </div>
+    <div style="padding:14px 18px;border-bottom:1px solid #DDD9D0">
+      <div style="font-size:14px;font-weight:600;color:#1E2D3D;margin-bottom:6px">How much WCPM growth per week is expected for an at-risk reader?</div>
+      <div style="font-size:14px;color:#4A5A6B;line-height:1.6">Research suggests that students receiving effective Tier 2 or Tier 3 intervention can achieve 1.5–2.0 WCPM growth per week. Students on a typical Tier 1 trajectory grow approximately 1.0–1.5 WCPM per week. If a student's weekly growth rate is below 1.0 WCPM, the current intervention intensity may not be sufficient and should be reviewed.</div>
+    </div>
+    <div style="padding:14px 18px;border-bottom:1px solid #DDD9D0">
+      <div style="font-size:14px;font-weight:600;color:#1E2D3D;margin-bottom:6px">How do I document fluency progress for an IEP?</div>
+      <div style="font-size:14px;color:#4A5A6B;line-height:1.6">For IEP documentation, record a baseline WCPM score before intervention begins, then assess every 2 weeks using the same passage level. Document the date, passage, WCPM score, and accuracy percentage for each assessment. A trend chart showing the student's trajectory against their annual goal benchmark — and against grade-level norms — is the clearest evidence for IEP progress monitoring. Export a PDF summary from this tool to share at IEP meetings.</div>
+    </div>
+    <div style="padding:14px 18px">
+      <div style="font-size:14px;font-weight:600;color:#1E2D3D;margin-bottom:6px">Is student data saved when I use this tool?</div>
+      <div style="font-size:14px;color:#4A5A6B;line-height:1.6">No. All calculations happen entirely in your browser — nothing is stored or transmitted. You can use initials, student numbers, or any placeholder in the name field. No student PII is ever collected or required. Your coach email (entered at PDF export) is the only personal data we hold, and only when you choose to download.</div>
+    </div>
+  </div>
+
+  <p style="font-size:13px;color:#8A9AAB;line-height:1.6">
+    readingcoachkit.com is a free tool for reading coaches and literacy specialists. Tools include fluency tracking, small group planning, running record analysis, decodable word generation, sight word mastery tracking, and reading level benchmark checks.
+    <br><br>
+    🔒 No student data collected. Student names and scores never leave your device.
+  </p>
+
+</section>
+</body>
+</html>
