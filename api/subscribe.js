@@ -16,9 +16,9 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Valid email required' });
   }
 
-  const RESEND_API_KEY       = process.env.RESEND_API_KEY;
-  const BEEHIIV_API_KEY      = process.env.BEEHIIV_API_KEY;
-  const BEEHIIV_PUB_ID       = process.env.BEEHIIV_PUBLICATION_ID;
+  const RESEND_API_KEY  = process.env.RESEND_API_KEY;
+  const BEEHIIV_API_KEY = process.env.BEEHIIV_API_KEY;
+  const BEEHIIV_PUB_ID  = process.env.BEEHIIV_PUBLICATION_ID;
 
   if (!RESEND_API_KEY || !BEEHIIV_API_KEY || !BEEHIIV_PUB_ID) {
     console.error('Missing environment variables');
@@ -38,7 +38,7 @@ export default async function handler(req, res) {
         body: JSON.stringify({
           email,
           reactivate_existing: false,
-          send_welcome_email:  false,   // we send our own via Resend
+          send_welcome_email:  false,
           utm_source:          'readingcoachkit',
           utm_medium:          'tool',
           utm_campaign:        'fluency-tracker',
@@ -52,10 +52,12 @@ export default async function handler(req, res) {
     if (!beehiivRes.ok) {
       const errBody = await beehiivRes.text();
       console.error('Beehiiv error:', beehiivRes.status, errBody);
-      // Don't hard-fail — still send the email even if Beehiiv hiccups
+      // Non-fatal — continue to send email
     }
 
-    // ── 2. Send confirmation + PDF link via Resend ───────────────────────────
+    // ── 2. Send confirmation via Resend ──────────────────────────────────────
+    // NOTE: Using Resend's shared "onboarding" sender until readingcoachkit.com
+    // domain is verified in Resend. Swap to hello@readingcoachkit.com after verification.
     const resendRes = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
@@ -63,7 +65,7 @@ export default async function handler(req, res) {
         'Authorization': `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from:    'ReadingCoachKit <hello@readingcoachkit.com>',
+        from:    'ReadingCoachKit <onboarding@resend.dev>',
         to:      [email],
         subject: 'Your Fluency Tracker Results',
         html: `
