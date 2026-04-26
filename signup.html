@@ -223,13 +223,14 @@ body {
       </div>
 
       <div class="fi">
-        <label>Email address</label>
-        <input type="email" id="signupEmail" placeholder="your@email.com" oninput="if(!window._signupStarted){gtag('event','signup_form_start');window._signupStarted=true;}">
+        <label>School email address</label>
+        <input type="email" id="signupEmail" placeholder="your school email" oninput="if(!window._signupStarted){gtag('event','signup_form_start');window._signupStarted=true;}">
       </div>
 
       <button class="submit-btn" onclick="submitSignup()">Get early access →</button>
       <p class="form-note">🔒 Your account data is private and never shared. We never require real student names — use initials or IDs, your choice.</p>
       <p class="signin-link">Already have an account? <a href="/">Sign in</a></p>
+      <p style="text-align:center;margin-top:14px"><a href="/" style="font-size:13px;color:var(--text3);text-decoration:none;" onclick="gtag('event','signup_back_to_tools')">← Back to the tools</a></p>
     </div>
 
     <div class="success-state" id="successState">
