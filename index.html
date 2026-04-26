@@ -32,6 +32,15 @@
       "url": "https://readingcoachkit.com/#fluency"
     },
     {
+      "@type": "SoftwareApplication",
+      "name": "Running Record Calculator",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "Web",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "description": "Calculate running record accuracy percentage, reading level recommendation (Independent, Instructional, or Frustration), and self-correction ratio. Free for reading coaches and literacy specialists.",
+      "url": "https://readingcoachkit.com/#running-record"
+    },
+    {
       "@type": "FAQPage",
       "mainEntity": [
         {
@@ -541,6 +550,9 @@ body {
   line-height: 1;
 }
 .ba-sub { font-size: 13px; color: var(--text2); margin-top: 5px; }
+.ba-val.g { color: var(--green); }
+.ba-val.a { color: var(--amber); }
+.ba-val.r { color: var(--red); }
 .ba-right { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; flex-shrink: 0; }
 .ba-stat-lbl { font-size: 11px; color: var(--text2); text-align: right; }
 .ba-stat-val {
@@ -755,7 +767,10 @@ canvas#fluencyChart {
   background: var(--bg2);
   display: none;
 }
-@media(min-width: 900px) { .sponsor-slot { display: block; } }
+/* SPONSOR SLOT HIDDEN — re-enable when first sponsor is confirmed
+   Replace placeholder content and uncomment this line:
+   @media(min-width: 900px) { .sponsor-slot { display: block; } }
+*/
 .sponsor-label {
   font-size: 9px;
   color: var(--text3);
@@ -974,9 +989,9 @@ canvas#fluencyChart {
     overflow: visible;
     display: block;
   }
-  /* Print header */
+  /* Print header — generic (panel label shown via rh-label) */
   .right::before {
-    content: 'Reading Fluency Progress Report — readingcoachkit.com';
+    content: 'readingcoachkit.com — Reading Coach Tools';
     display: block;
     font-family: 'DM Serif Display', Georgia, serif;
     font-size: 14px;
@@ -1041,8 +1056,8 @@ canvas#fluencyChart {
 <!-- TABS -->
 <div class="tabs">
   <button class="tab on" onclick="showTab('fluency',this)"><span class="tab-n">01</span>Fluency Tracker</button>
-  <button class="tab tab-soon"><span class="tab-n">02</span>Group Planner</button>
-  <button class="tab tab-soon"><span class="tab-n">03</span>Running Record</button>
+  <button class="tab" id="tab-rr" onclick="showTab('rr',this)"><span class="tab-n">02</span>Running Record</button>
+  <button class="tab tab-soon"><span class="tab-n">03</span>Group Planner</button>
   <button class="tab tab-soon"><span class="tab-n">04</span>Word Generator</button>
   <button class="tab tab-soon"><span class="tab-n">05</span>Sight Words</button>
   <button class="tab tab-soon"><span class="tab-n">06</span>Benchmark Check</button>
@@ -1271,6 +1286,223 @@ canvas#fluencyChart {
     </div><!-- /split -->
   </div><!-- /panel-fluency -->
 
+  <!-- PANEL: RUNNING RECORD -->
+  <div class="panel" id="panel-rr">
+    <div class="split">
+
+      <!-- LEFT: INPUTS -->
+      <div class="left">
+        <div class="lh">
+          <div class="lh-q">How accurate was this student's reading?</div>
+          <div class="lh-hint">Enter running record data to get accuracy %, reading level, and self-correction ratio.</div>
+        </div>
+        <div class="lbody">
+
+          <!-- Student name -->
+          <div class="fi">
+            <label>Student name or ID</label>
+            <div class="fi-note">Use initials or a number — no real names needed.</div>
+            <input type="text" id="rrStudentName" placeholder="e.g. Student 4 or MJ" oninput="updateRR()" maxlength="40">
+          </div>
+
+          <!-- Book title + level -->
+          <div class="fi2">
+            <div class="fi">
+              <label>Book title</label>
+              <input type="text" id="rrBookTitle" placeholder="e.g. The Big Storm" oninput="updateRR()" maxlength="60">
+            </div>
+            <div class="fi">
+              <label>Book level (A–Z)</label>
+              <select id="rrBookLevel" onchange="updateRR()">
+                <option value="">Select level</option>
+                <option>A</option><option>B</option><option>C</option><option>D</option>
+                <option>E</option><option>F</option><option>G</option><option>H</option>
+                <option>I</option><option>J</option><option>K</option><option>L</option>
+                <option>M</option><option>N</option><option>O</option><option>P</option>
+                <option>Q</option><option>R</option><option>S</option><option>T</option>
+                <option>U</option><option>V</option><option>W</option><option>X</option>
+                <option>Y</option><option>Z</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Total words -->
+          <div class="fi">
+            <label>Total words in passage</label>
+            <input type="number" id="rrTotalWords" placeholder="e.g. 150" min="1" max="1000" oninput="updateRR()">
+          </div>
+
+          <!-- Errors + self-corrections -->
+          <div class="fi2">
+            <div class="fi">
+              <label>Errors (E)</label>
+              <div class="fi-note">Words read incorrectly</div>
+              <input type="number" id="rrErrors" placeholder="0" min="0" max="500" oninput="updateRR()">
+            </div>
+            <div class="fi">
+              <label>Self-corrections (SC)</label>
+              <div class="fi-note">Errors caught and fixed</div>
+              <input type="number" id="rrSC" placeholder="0" min="0" max="500" oninput="updateRR()">
+            </div>
+          </div>
+
+          <!-- Optional notes -->
+          <div class="fi">
+            <label>Behavior notes (optional)</label>
+            <input type="text" id="rrNotes" placeholder="e.g. strong at beginning blends, struggled with vowel teams" oninput="updateRR()" maxlength="200">
+          </div>
+
+          <!-- Assessment date -->
+          <div class="fi">
+            <label>Assessment date</label>
+            <input type="date" id="rrDate" oninput="updateRR()">
+          </div>
+
+          <!-- Privacy note -->
+          <div class="privacy-note">
+            <span class="privacy-note-icon">🔒</span>
+            <div><strong>Your student data never leaves this device.</strong> Nothing is stored or transmitted. All calculations happen in your browser only.</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- RIGHT: RESULTS -->
+      <div class="right">
+        <div class="rh">
+          <div>
+            <div class="rh-label">Running Record Analysis</div>
+            <div class="rh-student" id="rrRhStudent" style="display:none"></div>
+          </div>
+          <div class="live-dot">Updates live</div>
+        </div>
+
+        <div class="rbody" id="rrResultsBody">
+          <!-- Empty state -->
+          <div class="empty-state" id="rrEmptyState">
+            <div class="empty-icon">📋</div>
+            <div class="empty-title">Enter running record data</div>
+            <div class="empty-sub">Add total words, errors, and self-corrections to see accuracy %, reading level recommendation, and self-correction ratio.</div>
+          </div>
+
+          <!-- Results -->
+          <div id="rrResultsContent" style="display:none">
+
+            <!-- Big answer: accuracy % -->
+            <div class="ba">
+              <div>
+                <div class="ba-lbl">Reading accuracy</div>
+                <div class="ba-val" id="rrAccuracy">—</div>
+                <div class="ba-sub" id="rrAccuracySub">—</div>
+              </div>
+              <div class="ba-right">
+                <div>
+                  <div class="ba-stat-lbl">Error rate</div>
+                  <div class="ba-stat-val" id="rrErrorRate">—</div>
+                </div>
+                <div>
+                  <div class="ba-stat-lbl">SC ratio</div>
+                  <div class="ba-stat-val" id="rrSCRatio">—</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stat grid -->
+            <div class="sg3">
+              <div class="sc">
+                <div class="sc-lbl">Total words</div>
+                <div class="sc-val" id="rrStatWords">—</div>
+              </div>
+              <div class="sc">
+                <div class="sc-lbl">Errors</div>
+                <div class="sc-val" id="rrStatErrors">—</div>
+              </div>
+              <div class="sc">
+                <div class="sc-lbl">Self-corrections</div>
+                <div class="sc-val" id="rrStatSC">—</div>
+              </div>
+            </div>
+
+            <!-- Reading level recommendation -->
+            <div class="bk">
+              <div class="bk-r hi">
+                <span class="bk-lbl">Book level assessed</span>
+                <span class="bk-val" id="rrBkLevel">—</span>
+              </div>
+              <div class="bk-r">
+                <span class="bk-lbl">Accuracy %</span>
+                <span class="bk-val" id="rrBkAccuracy">—</span>
+              </div>
+              <div class="bk-r">
+                <span class="bk-lbl">Independent level (≥ 95%)</span>
+                <span class="bk-val" id="rrBkIndep">—</span>
+              </div>
+              <div class="bk-r">
+                <span class="bk-lbl">Instructional level (90–94%)</span>
+                <span class="bk-val" id="rrBkInstr">—</span>
+              </div>
+              <div class="bk-r">
+                <span class="bk-lbl">Frustration level (≤ 89%)</span>
+                <span class="bk-val" id="rrBkFrust">—</span>
+              </div>
+              <div class="bk-r hi">
+                <span class="bk-lbl">Self-correction ratio</span>
+                <span class="bk-val" id="rrBkSCR">—</span>
+              </div>
+            </div>
+
+            <!-- Verdict -->
+            <div class="verdict" id="rrVerdictBox">
+              <div class="vdot"></div>
+              <span id="rrVerdictText">—</span>
+            </div>
+
+            <!-- Recommendation -->
+            <div class="rec" id="rrRecBox">—</div>
+
+            <!-- SC ratio explainer -->
+            <div class="bk" id="rrSCExplainer" style="display:none">
+              <div class="bk-r hi">
+                <span class="bk-lbl">About self-correction ratio</span>
+                <span class="bk-val"></span>
+              </div>
+              <div class="bk-r">
+                <span class="bk-lbl" style="line-height:1.5" id="rrSCExplainText"></span>
+              </div>
+            </div>
+
+          </div><!-- /rrResultsContent -->
+        </div><!-- /rbody -->
+
+        <!-- Sponsor slot -->
+        <div class="sponsor-slot">
+          <div class="sponsor-label">
+            <span>Curriculum Partner</span>
+            <span>Sponsored</span>
+          </div>
+          <div class="sponsor-inner">
+            <div class="sponsor-logo">Amplify</div>
+            <div class="sponsor-copy">
+              <div class="sponsor-head">Science of Reading programs trusted by 15 million students</div>
+              <div class="sponsor-sub">mCLASS reading assessments &amp; CKLA curriculum</div>
+            </div>
+            <button class="sponsor-cta" onclick="trackEvent('sponsor_click', { sponsor: 'Amplify' })">Learn more</button>
+          </div>
+        </div>
+
+        <!-- Gate bar -->
+        <div class="gate">
+          <div class="gate-btns">
+            <button class="g-primary" onclick="openRRExportModal()">Export Running Record PDF</button>
+            <button class="g-sec" onclick="trackEvent('rr_clear_all');clearRR()">Clear</button>
+          </div>
+          <div class="gate-note">Free to use · Enter your email to save or download the PDF report</div>
+        </div>
+
+      </div><!-- /right -->
+    </div><!-- /split -->
+  </div><!-- /panel-rr -->
+
 </div><!-- /panels -->
 </div><!-- /app-shell -->
 
@@ -1360,6 +1592,44 @@ canvas#fluencyChart {
   </div>
 </div>
 
+
+<!-- ── RUNNING RECORD EXPORT MODAL ── -->
+<div class="modal-bg" id="rr-export-modal">
+  <div class="modal">
+    <div id="rrExportFormState">
+      <h3>Save your running record</h3>
+      <p>Enter your email to download the PDF and receive a copy. We'll also send you occasional tool updates — unsubscribe anytime.</p>
+      <input type="email" id="rrExportEmail" placeholder="your@email.com">
+      <select id="rrExportState" style="width:100%;height:44px;border:1px solid rgba(30,45,61,0.22);border-radius:3px;padding:0 14px;font-family:var(--sans);font-size:14px;color:var(--text);background:#fff;outline:none;margin-bottom:10px;-webkit-appearance:none;">
+        <option value="">What state do you teach in? (optional)</option>
+        <option>Alabama</option><option>Alaska</option><option>Arizona</option><option>Arkansas</option>
+        <option>California</option><option>Colorado</option><option>Connecticut</option><option>Delaware</option>
+        <option>Florida</option><option>Georgia</option><option>Hawaii</option><option>Idaho</option>
+        <option>Illinois</option><option>Indiana</option><option>Iowa</option><option>Kansas</option>
+        <option>Kentucky</option><option>Louisiana</option><option>Maine</option><option>Maryland</option>
+        <option>Massachusetts</option><option>Michigan</option><option>Minnesota</option><option>Mississippi</option>
+        <option>Missouri</option><option>Montana</option><option>Nebraska</option><option>Nevada</option>
+        <option>New Hampshire</option><option>New Jersey</option><option>New Mexico</option><option>New York</option>
+        <option>North Carolina</option><option>North Dakota</option><option>Ohio</option><option>Oklahoma</option>
+        <option>Oregon</option><option>Pennsylvania</option><option>Rhode Island</option><option>South Carolina</option>
+        <option>South Dakota</option><option>Tennessee</option><option>Texas</option><option>Utah</option>
+        <option>Vermont</option><option>Virginia</option><option>Washington</option><option>West Virginia</option>
+        <option>Wisconsin</option><option>Wyoming</option>
+      </select>
+      <div class="modal-note">🔒 We'll include state literacy funding updates if you choose one. Optional.</div>
+      <div class="modal-btns">
+        <button class="modal-send" onclick="submitRRExport()">Download PDF →</button>
+        <button class="modal-cancel" onclick="document.getElementById('rr-export-modal').classList.remove('open')">Cancel</button>
+      </div>
+    </div>
+    <div id="rrExportSuccessState" class="modal-success" style="display:none">
+      <div class="check">✅</div>
+      <h4>Your report is downloading</h4>
+      <p>We've also sent a copy to your inbox. Welcome to readingcoachkit.</p>
+      <button class="modal-send" onclick="document.getElementById('rr-export-modal').classList.remove('open');document.getElementById('rrExportSuccessState').style.display='none';document.getElementById('rrExportFormState').style.display='block'">Done</button>
+    </div>
+  </div>
+</div>
 
 <!-- ── JAVASCRIPT ── -->
 <script>
@@ -1944,6 +2214,246 @@ async function submitFeedback() {
   }
 }
 
+// ══════════════════════════════════════════════════
+// RUNNING RECORD — Tool 2
+// ══════════════════════════════════════════════════
+
+// Level recommendation thresholds (standard running record convention)
+// Independent: 95–100% accuracy
+// Instructional: 90–94% accuracy
+// Frustration: ≤ 89% accuracy
+
+function updateRR() {
+  const totalWords = parseInt(document.getElementById('rrTotalWords').value) || 0;
+  const errors     = parseInt(document.getElementById('rrErrors').value) || 0;
+  const sc         = parseInt(document.getElementById('rrSC').value) || 0;
+  const name       = document.getElementById('rrStudentName').value.trim() || 'Student';
+  const level      = document.getElementById('rrBookLevel').value;
+  const title      = document.getElementById('rrBookTitle').value.trim();
+
+  // Update results header
+  const rrRhStudent = document.getElementById('rrRhStudent');
+  if (rrRhStudent) {
+    const displayName = document.getElementById('rrStudentName').value.trim();
+    if (displayName) {
+      rrRhStudent.textContent = 'Running record for ' + displayName;
+      rrRhStudent.style.display = 'block';
+    } else {
+      rrRhStudent.style.display = 'none';
+    }
+  }
+
+  if (totalWords < 1) {
+    document.getElementById('rrEmptyState').style.display = 'flex';
+    document.getElementById('rrResultsContent').style.display = 'none';
+    return;
+  }
+
+  document.getElementById('rrEmptyState').style.display = 'none';
+  document.getElementById('rrResultsContent').style.display = 'block';
+
+  // Core calculations
+  const runningErrors = Math.max(0, errors);
+  const wordsCorrect  = Math.max(0, totalWords - runningErrors);
+  const accuracy      = (wordsCorrect / totalWords) * 100;
+  const accuracyRnd   = Math.round(accuracy * 10) / 10;
+
+  // Error ratio: 1 error per N words
+  const errorRatio = runningErrors > 0 ? Math.round(totalWords / runningErrors) : null;
+
+  // Self-correction ratio: 1 SC per (errors + SC)
+  // Standard formula: SC ratio = (E + SC) / SC
+  const scRatio = sc > 0 ? Math.round((runningErrors + sc) / sc) : null;
+
+  // Reading level recommendation
+  let levelRec, levelClass;
+  if (accuracy >= 95) {
+    levelRec = 'Independent';
+    levelClass = 'on-track';
+  } else if (accuracy >= 90) {
+    levelRec = 'Instructional';
+    levelClass = 'monitor';
+  } else {
+    levelRec = 'Frustration';
+    levelClass = 'at-risk';
+  }
+
+  // ── Update UI ──
+
+  // Big answer
+  const accEl = document.getElementById('rrAccuracy');
+  accEl.textContent = accuracyRnd + '%';
+  accEl.className = 'ba-val ' + (accuracy >= 95 ? 'g' : accuracy >= 90 ? 'a' : 'r');
+
+  document.getElementById('rrAccuracySub').textContent =
+    levelRec + ' level' + (level ? ' at Level ' + level : '') + (title ? ' — ' + title : '');
+
+  document.getElementById('rrErrorRate').textContent  = errorRatio ? '1 : ' + errorRatio : '—';
+  document.getElementById('rrSCRatio').textContent    = scRatio    ? '1 : ' + scRatio    : '—';
+
+  // Stat grid
+  document.getElementById('rrStatWords').textContent  = totalWords;
+  const errEl = document.getElementById('rrStatErrors');
+  errEl.textContent  = runningErrors;
+  errEl.className    = 'sc-val ' + (runningErrors === 0 ? 'g' : runningErrors <= 3 ? 'a' : 'r');
+  const scEl = document.getElementById('rrStatSC');
+  scEl.textContent   = sc;
+  scEl.className     = 'sc-val ' + (sc > 0 ? 'g' : '');
+
+  // Breakdown table
+  document.getElementById('rrBkLevel').textContent    = level ? 'Level ' + level : '—';
+  document.getElementById('rrBkAccuracy').textContent = accuracyRnd + '%';
+
+  // Highlight the matching row
+  const indepEl = document.getElementById('rrBkIndep');
+  const instrEl = document.getElementById('rrBkInstr');
+  const frustEl = document.getElementById('rrBkFrust');
+  indepEl.textContent = accuracy >= 95 ? '✓ ' + accuracyRnd + '% — this text' : '95–100%';
+  instrEl.textContent = (accuracy >= 90 && accuracy < 95) ? '✓ ' + accuracyRnd + '% — this text' : '90–94%';
+  frustEl.textContent = accuracy < 90 ? '✓ ' + accuracyRnd + '% — this text' : '≤ 89%';
+  indepEl.className   = 'bk-val' + (accuracy >= 95 ? ' g' : '');
+  instrEl.className   = 'bk-val' + (accuracy >= 90 && accuracy < 95 ? ' a' : '');
+  frustEl.className   = 'bk-val' + (accuracy < 90 ? ' r' : '');
+
+  document.getElementById('rrBkSCR').textContent = scRatio ? '1 : ' + scRatio : sc === 0 && runningErrors > 0 ? 'No SCs recorded' : '—';
+
+  // Verdict
+  const rrVerdictBox  = document.getElementById('rrVerdictBox');
+  const rrVerdictText = document.getElementById('rrVerdictText');
+  rrVerdictBox.className = 'verdict ' + levelClass;
+  const levelDesc = level ? ' at Level ' + level : '';
+  if (levelRec === 'Independent') {
+    rrVerdictText.textContent = 'Independent' + levelDesc + ' — ' + accuracyRnd + '% accuracy. This text is easy for this student.';
+  } else if (levelRec === 'Instructional') {
+    rrVerdictText.textContent = 'Instructional' + levelDesc + ' — ' + accuracyRnd + '% accuracy. This is the right challenge level for guided reading.';
+  } else {
+    rrVerdictText.textContent = 'Frustration' + levelDesc + ' — ' + accuracyRnd + '% accuracy. This text is too difficult for this student right now.';
+  }
+
+  // Recommendation
+  const rrRecBox = document.getElementById('rrRecBox');
+  const studentLabel = '<strong>' + name + '</strong>';
+  if (levelRec === 'Independent') {
+    rrRecBox.innerHTML = studentLabel + ' read with ' + accuracyRnd + '% accuracy — this text is at the independent level. Consider moving up one level for the next guided reading session. Texts at this level are well-suited for independent reading practice.';
+  } else if (levelRec === 'Instructional') {
+    rrRecBox.innerHTML = studentLabel + ' read with ' + accuracyRnd + '% accuracy — this is the instructional sweet spot. Stay at Level ' + (level || 'this level') + ' for guided reading. Focus instruction on the error patterns observed during this reading.';
+  } else {
+    rrRecBox.innerHTML = studentLabel + ' read with only ' + accuracyRnd + '% accuracy — this text is at the frustration level. Drop back one or two levels to find the instructional level. Reading text that is too hard does not build fluency or comprehension and may increase anxiety around reading.';
+  }
+
+  // SC ratio explainer
+  const rrSCExplainer = document.getElementById('rrSCExplainer');
+  const rrSCExplainText = document.getElementById('rrSCExplainText');
+  if (scRatio && runningErrors > 0) {
+    rrSCExplainer.style.display = 'block';
+    let scMsg = '';
+    if (scRatio <= 3) {
+      scMsg = 'SC ratio of 1 : ' + scRatio + ' — ' + name + ' is actively self-monitoring and correcting frequently. This is a strong indicator that the student is monitoring for meaning.';
+    } else if (scRatio <= 5) {
+      scMsg = 'SC ratio of 1 : ' + scRatio + ' — good self-monitoring. ' + name + ' is catching and correcting some errors, which suggests awareness of meaning and structure.';
+    } else {
+      scMsg = 'SC ratio of 1 : ' + scRatio + ' — some self-monitoring present, but ' + name + ' may benefit from explicit prompting to check and reread when something doesn\'t sound right.';
+    }
+    rrSCExplainText.textContent = scMsg;
+  } else if (runningErrors > 0 && sc === 0) {
+    rrSCExplainer.style.display = 'block';
+    rrSCExplainText.textContent = 'No self-corrections recorded. If ' + name + ' made errors without correcting any of them, consider prompting the student to check whether what they read makes sense and sounds right. Explicit self-monitoring strategies may be beneficial.';
+  } else {
+    rrSCExplainer.style.display = 'none';
+  }
+}
+
+function clearRR() {
+  ['rrStudentName','rrBookTitle','rrTotalWords','rrErrors','rrSC','rrNotes'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('rrBookLevel').value = '';
+  document.getElementById('rrDate').value = new Date().toISOString().split('T')[0];
+  updateRR();
+}
+
+// ── RR EXPORT MODAL ──
+function openRRExportModal() {
+  const totalWords = parseInt(document.getElementById('rrTotalWords').value) || 0;
+  if (totalWords < 1) {
+    alert('Enter total words and errors before exporting.');
+    return;
+  }
+  trackEvent('rr_export_modal_open');
+  document.getElementById('rr-export-modal').classList.add('open');
+}
+
+async function submitRRExport() {
+  const email = document.getElementById('rrExportEmail').value.trim();
+  if (!email || !email.includes('@')) {
+    document.getElementById('rrExportEmail').focus();
+    document.getElementById('rrExportEmail').style.borderColor = 'var(--red)';
+    return;
+  }
+  document.getElementById('rrExportEmail').style.borderColor = '';
+
+  const state   = document.getElementById('rrExportState').value;
+  const sendBtn = document.querySelector('#rrExportFormState .modal-send');
+  sendBtn.disabled = true;
+  sendBtn.textContent = 'Sending…';
+
+  const totalWords = parseInt(document.getElementById('rrTotalWords').value) || 0;
+  const errors     = parseInt(document.getElementById('rrErrors').value) || 0;
+  const accuracy   = totalWords > 0 ? Math.round(((totalWords - errors) / totalWords) * 100 * 10) / 10 : null;
+  const levelRec   = accuracy === null ? null : accuracy >= 95 ? 'independent' : accuracy >= 90 ? 'instructional' : 'frustration';
+
+  try {
+    const res = await fetch('/api/subscribe-rr', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        state: state || null,
+        usage: {
+          tool: 'running-record',
+          accuracy_pct: accuracy,
+          level_recommendation: levelRec,
+          book_level: document.getElementById('rrBookLevel').value || null
+        }
+      })
+    });
+
+    if (!res.ok) throw new Error('Server error');
+
+    trackEvent('rr_export_complete', { level_rec: levelRec });
+
+    document.getElementById('rrExportFormState').style.display = 'none';
+    document.getElementById('rrExportSuccessState').style.display = 'block';
+
+    setTimeout(() => {
+      document.getElementById('rr-export-modal').classList.remove('open');
+      document.getElementById('rrExportSuccessState').style.display = 'none';
+      document.getElementById('rrExportFormState').style.display = 'block';
+      window.print();
+    }, 1800);
+
+  } catch (err) {
+    console.error('RR export error:', err);
+    sendBtn.disabled = false;
+    sendBtn.textContent = 'Download PDF →';
+    let errEl = document.getElementById('rrExportError');
+    if (!errEl) {
+      errEl = document.createElement('p');
+      errEl.id = 'rrExportError';
+      errEl.style.cssText = 'color:var(--red);font-size:13px;margin:-4px 0 10px;';
+      sendBtn.closest('.modal-btns').before(errEl);
+    }
+    errEl.textContent = 'Something went wrong — please try again.';
+  }
+}
+
+// ── Init date field for Running Record ──
+document.addEventListener('DOMContentLoaded', () => {
+  const rrDateEl = document.getElementById('rrDate');
+  if (rrDateEl) rrDateEl.value = new Date().toISOString().split('T')[0];
+});
+
 // ── HELPERS ──
 function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
 function gradeLabel(g) { return g === 'K' ? 'Kindergarten' : 'Grade ' + g; }
@@ -2028,7 +2538,7 @@ function formatDateShort(d) {
   </div>
 
   <p style="font-size:13px;color:#8A9AAB;line-height:1.6">
-    readingcoachkit.com is a free tool for reading coaches and literacy specialists. Tools include fluency tracking, small group planning, running record analysis, decodable word generation, sight word mastery tracking, and reading level benchmark checks.
+    readingcoachkit.com is a free toolkit for reading coaches and literacy specialists. Live tools: <strong>Fluency Tracker</strong> (WCPM progress monitoring against Hasbrouck-Tindal norms) and <strong>Running Record Calculator</strong> (accuracy %, reading level, self-correction ratio). Coming soon: Group Planner, Word Generator, Sight Word Tracker, and Benchmark Check.
     <br><br>
     🔒 No student data collected. Student names and scores never leave your device.
   </p>
