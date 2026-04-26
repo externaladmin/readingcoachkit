@@ -282,6 +282,7 @@ body {
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  overflow-x: visible;
   scrollbar-width: thin;
   scrollbar-color: var(--bg3) transparent;
 }
@@ -350,10 +351,8 @@ body {
 .tip-icon:hover, .tip-icon.open { background: var(--blue); color: #fff; }
 .tip-box {
   display: none;
-  position: absolute;
-  left: 0;
-  top: calc(100% + 6px);
-  z-index: 200;
+  position: fixed;
+  z-index: 9000;
   background: var(--text);
   color: #fff;
   font-size: 12px;
@@ -372,7 +371,7 @@ body {
   content: '';
   position: absolute;
   top: -5px;
-  left: 10px;
+  left: var(--arrow-left, 12px);
   width: 10px;
   height: 10px;
   background: var(--text);
@@ -1497,11 +1496,11 @@ canvas#fluencyChart {
               </div>
               <div class="ba-right">
                 <div>
-                  <div class="ba-stat-lbl" style="display:flex;align-items:center;justify-content:flex-end;gap:3px">Error rate <span class="tip-wrap"><span class="tip-icon" onclick="toggleTip(this)" style="font-size:8px;width:12px;height:12px">i</span><span class="tip-box" style="left:auto;right:0">1:20 means 1 error per 20 words. The higher the second number, the more accurate the reading.</span></span></div>
+                  <div class="ba-stat-lbl" style="display:flex;align-items:center;justify-content:flex-end;gap:3px">Error rate <span class="tip-wrap"><span class="tip-icon" onclick="toggleTip(this)" style="font-size:8px;width:12px;height:12px">i</span><span class="tip-box">1:20 means 1 error per 20 words. The higher the second number, the more accurate the reading.</span></span></div>
                   <div class="ba-stat-val" id="rrErrorRate">—</div>
                 </div>
                 <div>
-                  <div class="ba-stat-lbl" style="display:flex;align-items:center;justify-content:flex-end;gap:3px">SC ratio <span class="tip-wrap"><span class="tip-icon" onclick="toggleTip(this)" style="font-size:8px;width:12px;height:12px">i</span><span class="tip-box" style="left:auto;right:0">Self-correction ratio. 1:3 means the student corrected 1 out of every 3 errors. Lower = stronger self-monitoring. Formula: (E + SC) ÷ SC.</span></span></div>
+                  <div class="ba-stat-lbl" style="display:flex;align-items:center;justify-content:flex-end;gap:3px">SC ratio <span class="tip-wrap"><span class="tip-icon" onclick="toggleTip(this)" style="font-size:8px;width:12px;height:12px">i</span><span class="tip-box">Self-correction ratio. 1:3 means the student corrected 1 out of every 3 errors. Lower = stronger self-monitoring. Formula: (E + SC) ÷ SC.</span></span></div>
                   <div class="ba-stat-val" id="rrSCRatio">—</div>
                 </div>
               </div>
@@ -2574,14 +2573,33 @@ function formatDateShort(d) {
 function toggleTip(el) {
   const wrap = el.closest('.tip-wrap');
   const isOpen = wrap.classList.contains('open');
+
   // Close all open tooltips first
   document.querySelectorAll('.tip-wrap.open').forEach(w => {
     w.classList.remove('open');
-    w.querySelector('.tip-icon').classList.remove('open');
+    w.querySelector('.tip-icon')?.classList.remove('open');
   });
+
   if (!isOpen) {
     wrap.classList.add('open');
     el.classList.add('open');
+
+    // Position the tooltip using fixed coords so it escapes any overflow:hidden parent
+    const box = wrap.querySelector('.tip-box');
+    const iconRect = el.getBoundingClientRect();
+    const tipW = 220;
+    let left = iconRect.left;
+    // Don't overflow right edge of viewport
+    if (left + tipW > window.innerWidth - 12) {
+      left = window.innerWidth - tipW - 12;
+    }
+    box.style.top  = (iconRect.bottom + 6) + 'px';
+    box.style.left = left + 'px';
+
+    // Move the arrow to point at the icon
+    const arrow = box.querySelector('::before'); // can't set via JS — use a data attr approach
+    const arrowLeft = Math.max(8, iconRect.left - left + 2);
+    box.style.setProperty('--arrow-left', arrowLeft + 'px');
   }
 }
 // Close tooltips when clicking outside
