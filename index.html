@@ -1302,12 +1302,24 @@ canvas#fluencyChart {
 <!-- ── FEEDBACK MODAL ── -->
 <div class="modal-bg" id="feedback-modal">
   <div class="modal">
-    <h3>What's missing?</h3>
-    <p>Tell us what you'd find useful — a tool you need, a feature that's not here, or something that felt off.</p>
-    <textarea placeholder="e.g. I need a running record calculator that saves student history..."></textarea>
-    <div class="modal-btns">
-      <button class="modal-send" onclick="document.getElementById('feedback-modal').classList.remove('open')">Send feedback</button>
-      <button class="modal-cancel" onclick="document.getElementById('feedback-modal').classList.remove('open')">Cancel</button>
+    <div id="feedbackFormState">
+      <h3>What's missing?</h3>
+      <p>Tell us what you'd find useful — a tool you need, a feature that's not here, or something that felt off.</p>
+      <textarea id="feedbackText" placeholder="e.g. I need a running record calculator that saves student history..."></textarea>
+      <div style="margin-bottom:6px">
+        <input type="email" id="feedbackEmail" placeholder="Your email (optional)" style="margin-bottom:0">
+      </div>
+      <div class="modal-note">💬 Leave your email and we'll follow up. No spam — ever.</div>
+      <div class="modal-btns">
+        <button class="modal-send" onclick="submitFeedback()">Send feedback</button>
+        <button class="modal-cancel" onclick="document.getElementById('feedback-modal').classList.remove('open')">Cancel</button>
+      </div>
+    </div>
+    <div id="feedbackSuccessState" class="modal-success" style="display:none">
+      <div class="check">🙏</div>
+      <h4>Thanks — we read every one.</h4>
+      <p>Your feedback goes straight to the team. If you left your email, we'll reach out when it's live.</p>
+      <button class="modal-send" onclick="document.getElementById('feedback-modal').classList.remove('open');document.getElementById('feedbackSuccessState').style.display='none';document.getElementById('feedbackFormState').style.display='block'">Done</button>
     </div>
   </div>
 </div>
@@ -1805,6 +1817,42 @@ async function submitExport() {
       sendBtn.closest('.modal-btns').before(errEl);
     }
     errEl.textContent = 'Something went wrong — please try again.';
+  }
+}
+
+// ── FEEDBACK SUBMIT ──
+async function submitFeedback() {
+  const text = document.getElementById('feedbackText').value.trim();
+  if (!text) {
+    document.getElementById('feedbackText').focus();
+    return;
+  }
+
+  const email = document.getElementById('feedbackEmail').value.trim();
+  const sendBtn = document.querySelector('#feedbackFormState .modal-send');
+  sendBtn.disabled = true;
+  sendBtn.textContent = 'Sending…';
+
+  try {
+    const res = await fetch('/api/feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, email: email || null })
+    });
+
+    // Show success regardless — don't punish the user if there's a server hiccup
+    document.getElementById('feedbackFormState').style.display = 'none';
+    document.getElementById('feedbackSuccessState').style.display = 'block';
+    document.getElementById('feedbackText').value = '';
+    document.getElementById('feedbackEmail').value = '';
+
+  } catch (err) {
+    // Still show success — feedback is a goodwill gesture, don't frustrate them
+    document.getElementById('feedbackFormState').style.display = 'none';
+    document.getElementById('feedbackSuccessState').style.display = 'block';
+  } finally {
+    sendBtn.disabled = false;
+    sendBtn.textContent = 'Send feedback';
   }
 }
 
