@@ -1784,7 +1784,28 @@ async function submitExport() {
     const res = await fetch('/api/subscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, state: state || null })
+      body: JSON.stringify({
+        email,
+        state: state || null,
+        usage: {
+          grade: selectedGrade,
+          period: selectedPeriod,
+          scores_entered: getScoreData().length,
+          verdict: (() => {
+            const e = getScoreData();
+            const n = NORMS[selectedGrade]?.[selectedPeriod];
+            if (!e.length || !n) return null;
+            const w = e[e.length - 1].wcpm;
+            return w >= n.p50 ? 'on-track' : w >= n.p25 ? 'monitor' : 'at-risk';
+          })(),
+          gap_from_p50: (() => {
+            const e = getScoreData();
+            const n = NORMS[selectedGrade]?.[selectedPeriod];
+            if (!e.length || !n) return null;
+            return e[e.length - 1].wcpm - n.p50;
+          })()
+        }
+      })
     });
 
     if (!res.ok) {
