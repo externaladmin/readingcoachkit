@@ -65,7 +65,7 @@ export default async function handler(req, res) {
         'Authorization': `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from:    'ReadingCoachKit <onboarding@resend.dev>',
+        from:    'ReadingCoachKit <hello@readingcoachkit.com>',
         to:      [email],
         subject: 'Your Fluency Tracker Results',
         html: `
