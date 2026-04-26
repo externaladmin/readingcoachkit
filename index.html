@@ -971,13 +971,23 @@ canvas#fluencyChart {
   .tb, .tabs, .left, .sponsor-slot, .gate, .modal-bg { display: none !important; }
   body, html { background: #fff; overflow: visible; height: auto; }
   #app-shell { height: auto; display: block; }
-  .panels, .panel { display: block; overflow: visible; }
+  /* Only show the active panel — hide inactive ones */
+  .panels { display: block; overflow: visible; }
+  .panel { display: none !important; overflow: visible; }
+  .panel.on { display: block !important; }
   .split { display: block; }
+  /* Kill all focus outlines and borders that appear in print preview */
+  *, *:focus, *:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+  }
   .right {
     display: block;
     overflow: visible;
     width: 100%;
     background: #fff;
+    border: none !important;
+    outline: none !important;
   }
   .rh {
     padding: 16px 24px 12px;
