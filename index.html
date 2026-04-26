@@ -75,16 +75,20 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-<!-- GA4 placeholder — replace with your measurement ID -->
-<!--
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<!-- Google Analytics GA4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-D7XCWKVTXJ"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-XXXXXXXXXX');
+  gtag('config', 'G-D7XCWKVTXJ');
+
+  // ── Conversion events ──
+  // Called from openExportModal(), submitExport(), submitFeedback(), submitSigninNotify()
+  function trackEvent(name, params) {
+    if (typeof gtag !== 'undefined') gtag('event', name, params || {});
+  }
 </script>
--->
 
 <style>
 :root {
@@ -1029,7 +1033,7 @@ canvas#fluencyChart {
 <div class="tb">
   <div class="logo">reading<b>coach</b><span>kit</span></div>
   <div class="tb-r">
-    <a href="#" class="tb-signin" onclick="document.getElementById('signin-modal').classList.add('open');return false">Sign in</a>
+    <a href="#" class="tb-signin" onclick="trackEvent('signin_modal_open');document.getElementById('signin-modal').classList.add('open');return false">Sign in</a>
     <a href="/signup" class="tb-cta">Free Account<span class="tb-cta-sub">saves your data</span></a>
   </div>
 </div>
@@ -1042,7 +1046,7 @@ canvas#fluencyChart {
   <button class="tab tab-soon"><span class="tab-n">04</span>Word Generator</button>
   <button class="tab tab-soon"><span class="tab-n">05</span>Sight Words</button>
   <button class="tab tab-soon"><span class="tab-n">06</span>Benchmark Check</button>
-  <a href="#" class="tb-feedback" onclick="document.getElementById('feedback-modal').classList.add('open');return false">Missing something?</a>
+  <a href="#" class="tb-feedback" onclick="trackEvent('feedback_modal_open');document.getElementById('feedback-modal').classList.add('open');return false">Missing something?</a>
 </div>
 
 <!-- PANELS -->
@@ -1250,7 +1254,7 @@ canvas#fluencyChart {
               <div class="sponsor-head">Phonemic awareness curriculum aligned with Science of Reading</div>
               <div class="sponsor-sub">Used by 300,000+ teachers across the US</div>
             </div>
-            <button class="sponsor-cta">Learn more</button>
+            <button class="sponsor-cta" onclick="trackEvent('sponsor_click', { sponsor: 'Heggerty' })">Learn more</button>
           </div>
         </div>
 
@@ -1258,7 +1262,7 @@ canvas#fluencyChart {
         <div class="gate">
           <div class="gate-btns">
             <button class="g-primary" onclick="openExportModal()">Export Progress Report PDF</button>
-            <button class="g-sec" onclick="clearAll()">Clear</button>
+            <button class="g-sec" onclick="trackEvent('clear_all');clearAll()">Clear</button>
           </div>
           <div class="gate-note">Free to use · Enter your email to save or download the PDF report</div>
         </div>
@@ -1793,6 +1797,7 @@ function openExportModal() {
     alert('Add at least one WCPM score before exporting.');
     return;
   }
+  trackEvent('export_modal_open', { grade: selectedGrade, period: selectedPeriod });
   document.getElementById('export-modal').classList.add('open');
 }
 
@@ -1845,6 +1850,9 @@ async function submitExport() {
       throw new Error(data.error || 'Server error');
     }
 
+    // Track successful email capture
+    trackEvent('pdf_export_complete', { grade: selectedGrade, period: selectedPeriod });
+
     // Success — show confirmation state then trigger print
     document.getElementById('exportFormState').style.display = 'none';
     document.getElementById('exportSuccessState').style.display = 'block';
@@ -1886,12 +1894,13 @@ async function submitSigninNotify() {
   sendBtn.disabled = true;
   sendBtn.textContent = 'Saving…';
   try {
-    await fetch('/api/subscribe', {
+    await fetch('/api/waitlist', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, state: null, usage: { utm_campaign: 'signin-waitlist' } })
+      body: JSON.stringify({ email, source: 'signin-waitlist' })
     });
   } catch (e) { /* non-fatal */ }
+  trackEvent('signin_waitlist_submit');
   document.getElementById('signinFormState').style.display = 'none';
   document.getElementById('signinSuccessState').style.display = 'block';
   sendBtn.disabled = false;
@@ -1919,6 +1928,7 @@ async function submitFeedback() {
     });
 
     // Show success regardless — don't punish the user if there's a server hiccup
+    trackEvent('feedback_submit', { has_email: !!email });
     document.getElementById('feedbackFormState').style.display = 'none';
     document.getElementById('feedbackSuccessState').style.display = 'block';
     document.getElementById('feedbackText').value = '';

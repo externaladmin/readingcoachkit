@@ -6,6 +6,15 @@
 <title>Free Account — ReadingCoachKit</title>
 <meta name="description" content="Create a free ReadingCoachKit account to save student data, access unlimited exports, and track progress across sessions.">
 <meta name="robots" content="noindex">
+<!-- Google Analytics GA4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-D7XCWKVTXJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-D7XCWKVTXJ');
+</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet">
 <style>
@@ -215,7 +224,7 @@ body {
 
       <div class="fi">
         <label>Email address</label>
-        <input type="email" id="signupEmail" placeholder="your@email.com">
+        <input type="email" id="signupEmail" placeholder="your@email.com" oninput="if(!window._signupStarted){gtag('event','signup_form_start');window._signupStarted=true;}">
       </div>
 
       <button class="submit-btn" onclick="submitSignup()">Get early access →</button>
@@ -227,7 +236,7 @@ body {
       <div class="check">✅</div>
       <h2>You're on the list.</h2>
       <p>We'll email you as soon as accounts are live — you'll be among the first to get access. In the meantime, all the tools are free to use.</p>
-      <a href="/" class="back-btn">Back to the tools →</a>
+      <a href="/" class="back-btn" onclick="gtag('event','signup_back_to_tools')">Back to the tools →</a>
     </div>
 
   </div>
@@ -256,6 +265,7 @@ async function submitSignup() {
     });
   } catch (e) { /* non-fatal */ }
 
+  if (typeof gtag !== 'undefined') gtag('event', 'signup_waitlist', { source: 'signup-page' });
   document.getElementById('formState').style.display = 'none';
   document.getElementById('successState').style.display = 'block';
   btn.disabled = false;
