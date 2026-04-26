@@ -468,6 +468,14 @@ body {
   letter-spacing: 0.08em;
   color: var(--text2);
 }
+.rh-student {
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--text);
+  margin-top: 2px;
+  font-style: italic;
+}
 .live-dot {
   font-size: 11px;
   color: var(--green);
@@ -963,6 +971,14 @@ canvas#fluencyChart {
     padding: 12px 24px 0;
     letter-spacing: 0.01em;
   }
+  /* Student name prominent in print */
+  .rh-student {
+    font-size: 20px !important;
+    font-style: normal !important;
+    font-weight: 600 !important;
+    color: #1E2D3D !important;
+    margin-top: 4px !important;
+  }
   /* Force page breaks to not split cards */
   .ba, .sg3, .sg2, .bench-bar-wrap, .chart-wrap, .bk, .verdict, .rec {
     page-break-inside: avoid;
@@ -1091,7 +1107,10 @@ canvas#fluencyChart {
       <!-- RIGHT: RESULTS -->
       <div class="right">
         <div class="rh">
-          <div class="rh-label">Fluency Analysis</div>
+          <div>
+            <div class="rh-label">Fluency Analysis</div>
+            <div class="rh-student" id="rhStudentName" style="display:none"></div>
+          </div>
           <div class="live-dot">Updates live</div>
         </div>
 
@@ -1453,6 +1472,18 @@ function updateResults() {
 
   document.getElementById('emptyState').style.display = 'none';
   document.getElementById('resultsContent').style.display = 'block';
+
+  // Show student name in results header
+  const rhName = document.getElementById('rhStudentName');
+  if (rhName) {
+    const displayName = document.getElementById('studentName').value.trim();
+    if (displayName) {
+      rhName.textContent = 'Fluency report for ' + displayName;
+      rhName.style.display = 'block';
+    } else {
+      rhName.style.display = 'none';
+    }
+  }
 
   const latest = entries[entries.length - 1];
   const first = entries[0];
