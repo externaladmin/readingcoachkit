@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Account — ReadingCoachKit</title>
+<meta name="description" content="Create a free ReadingCoachKit account to save student data, access unlimited exports, and track progress across sessions.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue:       #2D4A6B;
+  --terra:      #E8734A;
+  --terra-dark: #C45A32;
+  --bg:         #FAFAF7;
+  --bg2:        #F0EDE8;
+  --text:       #1E2D3D;
+  --text2:      #4A5A6B;
+  --text3:      #8A9AAB;
+  --bd:         rgba(30,45,61,0.12);
+  --green:      #2E7D4F;
+  --red:        #C0392B;
+  --serif:      'DM Serif Display', Georgia, serif;
+  --sans:       'DM Sans', system-ui, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* TOPBAR */
+.tb {
+  height: 48px;
+  background: var(--blue);
+  border-bottom: 2px solid var(--terra);
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.logo {
+  font-family: var(--sans);
+  font-size: 17px;
+  font-weight: 400;
+  color: #fff;
+  text-decoration: none;
+}
+.logo b {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-style: italic;
+}
+.logo span { color: var(--terra); font-weight: 600; }
+
+/* MAIN */
+.main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px;
+}
+.card {
+  background: #fff;
+  border: 1px solid var(--bd);
+  border-radius: 8px;
+  padding: 40px 36px;
+  max-width: 440px;
+  width: 100%;
+  box-shadow: 0 4px 24px rgba(30,45,61,0.07);
+}
+.card-icon { font-size: 32px; margin-bottom: 16px; }
+.card h1 {
+  font-family: var(--serif);
+  font-size: 26px;
+  font-weight: 400;
+  color: var(--text);
+  margin-bottom: 8px;
+  line-height: 1.25;
+}
+.card-sub {
+  font-size: 15px;
+  color: var(--text2);
+  line-height: 1.6;
+  margin-bottom: 28px;
+}
+.perks {
+  background: var(--bg2);
+  border-radius: 6px;
+  padding: 16px 18px;
+  margin-bottom: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.perk {
+  font-size: 14px;
+  color: var(--text2);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.perk-icon { font-size: 15px; flex-shrink: 0; }
+
+.fi { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+.fi label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text2);
+}
+.fi input {
+  width: 100%;
+  height: 44px;
+  background: var(--bg);
+  border: 1px solid rgba(30,45,61,0.2);
+  border-radius: 4px;
+  color: var(--text);
+  font-size: 15px;
+  font-family: var(--sans);
+  outline: none;
+  padding: 0 14px;
+  transition: border-color .15s;
+}
+.fi input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(45,74,107,0.1); }
+
+.submit-btn {
+  width: 100%;
+  height: 46px;
+  background: var(--terra);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--sans);
+  transition: background .12s;
+  margin-top: 4px;
+}
+.submit-btn:hover { background: var(--terra-dark); }
+.submit-btn:disabled { opacity: 0.6; cursor: default; }
+
+.form-note {
+  font-size: 12px;
+  color: var(--text3);
+  text-align: center;
+  margin-top: 12px;
+  line-height: 1.5;
+}
+.signin-link {
+  text-align: center;
+  font-size: 13px;
+  color: var(--text2);
+  margin-top: 20px;
+}
+.signin-link a { color: var(--blue); text-decoration: none; font-weight: 500; }
+
+/* SUCCESS STATE */
+.success-state {
+  display: none;
+  text-align: center;
+  padding: 10px 0;
+}
+.success-state .check { font-size: 40px; margin-bottom: 14px; }
+.success-state h2 {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+.success-state p { font-size: 14px; color: var(--text2); line-height: 1.6; margin-bottom: 20px; }
+.back-btn {
+  display: inline-block;
+  padding: 10px 24px;
+  background: var(--blue);
+  color: #fff;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  font-family: var(--sans);
+}
+</style>
+</head>
+<body>
+
+<div class="tb">
+  <a href="/" class="logo">reading<b>coach</b><span>kit</span></a>
+</div>
+
+<div class="main">
+  <div class="card">
+
+    <div id="formState">
+      <div class="card-icon">📖</div>
+      <h1>Save your work across sessions</h1>
+      <p class="card-sub">A free account lets you pick up where you left off — no re-entering student data every time.</p>
+
+      <div class="perks">
+        <div class="perk"><span class="perk-icon">✓</span> Student data saved between sessions</div>
+        <div class="perk"><span class="perk-icon">✓</span> Unlimited PDF exports</div>
+        <div class="perk"><span class="perk-icon">✓</span> Progress history across tools</div>
+        <div class="perk"><span class="perk-icon">✓</span> Free — always</div>
+      </div>
+
+      <div class="fi">
+        <label>Email address</label>
+        <input type="email" id="signupEmail" placeholder="your@email.com">
+      </div>
+
+      <button class="submit-btn" onclick="submitSignup()">Get early access →</button>
+      <p class="form-note">🔒 No student data collected. Unsubscribe anytime.</p>
+      <p class="signin-link">Already have an account? <a href="/">Sign in</a></p>
+    </div>
+
+    <div class="success-state" id="successState">
+      <div class="check">✅</div>
+      <h2>You're on the list.</h2>
+      <p>We'll email you as soon as accounts are live — you'll be among the first to get access. In the meantime, all the tools are free to use.</p>
+      <a href="/" class="back-btn">Back to the tools →</a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+async function submitSignup() {
+  const email = document.getElementById('signupEmail').value.trim();
+  const btn = document.querySelector('.submit-btn');
+
+  if (!email || !email.includes('@')) {
+    document.getElementById('signupEmail').style.borderColor = '#C0392B';
+    document.getElementById('signupEmail').focus();
+    return;
+  }
+  document.getElementById('signupEmail').style.borderColor = '';
+
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+
+  try {
+    await fetch('/api/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        state: null,
+        usage: { utm_campaign: 'signup-waitlist' }
+      })
+    });
+  } catch (e) { /* non-fatal */ }
+
+  document.getElementById('formState').style.display = 'none';
+  document.getElementById('successState').style.display = 'block';
+  btn.disabled = false;
+  btn.textContent = 'Get early access →';
+}
+</script>
+
+</body>
+</html>

@@ -169,6 +169,16 @@ body {
   text-decoration: none;
   white-space: nowrap;
   letter-spacing: 0.02em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.2;
+}
+.tb-cta-sub {
+  font-size: 9px;
+  font-weight: 400;
+  opacity: 0.85;
+  letter-spacing: 0.01em;
 }
 
 /* ── TABS ── */
@@ -1019,8 +1029,8 @@ canvas#fluencyChart {
 <div class="tb">
   <div class="logo">reading<b>coach</b><span>kit</span></div>
   <div class="tb-r">
-    <a href="#" class="tb-signin">Sign in</a>
-    <a href="#" class="tb-cta">Free account</a>
+    <a href="#" class="tb-signin" onclick="document.getElementById('signin-modal').classList.add('open');return false">Sign in</a>
+    <a href="/signup" class="tb-cta">Free Account<span class="tb-cta-sub">saves your data</span></a>
   </div>
 </div>
 
@@ -1295,6 +1305,28 @@ canvas#fluencyChart {
       <h4>Your report is downloading</h4>
       <p>We've also sent a copy to your inbox. Welcome to readingcoachkit.</p>
       <button class="modal-send" onclick="document.getElementById('export-modal').classList.remove('open');document.getElementById('exportSuccessState').style.display='none';document.getElementById('exportFormState').style.display='block'">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── SIGN IN MODAL ── -->
+<div class="modal-bg" id="signin-modal">
+  <div class="modal">
+    <div id="signinFormState">
+      <h3>Welcome back</h3>
+      <p>Account features are on their way. Leave your email and we'll notify you the moment sign-in is live — including early access to saved student data.</p>
+      <input type="email" id="signinEmail" placeholder="your@email.com">
+      <div class="modal-note">🔒 No spam. Unsubscribe anytime.</div>
+      <div class="modal-btns">
+        <button class="modal-send" onclick="submitSigninNotify()">Notify me</button>
+        <button class="modal-cancel" onclick="document.getElementById('signin-modal').classList.remove('open')">Cancel</button>
+      </div>
+    </div>
+    <div id="signinSuccessState" class="modal-success" style="display:none">
+      <div class="check">✅</div>
+      <h4>You're on the list.</h4>
+      <p>We'll email you as soon as accounts are live. Thanks for your patience.</p>
+      <button class="modal-send" onclick="document.getElementById('signin-modal').classList.remove('open');document.getElementById('signinSuccessState').style.display='none';document.getElementById('signinFormState').style.display='block'">Done</button>
     </div>
   </div>
 </div>
@@ -1839,6 +1871,31 @@ async function submitExport() {
     }
     errEl.textContent = 'Something went wrong — please try again.';
   }
+}
+
+// ── SIGN IN NOTIFY ──
+async function submitSigninNotify() {
+  const email = document.getElementById('signinEmail').value.trim();
+  if (!email || !email.includes('@')) {
+    document.getElementById('signinEmail').focus();
+    document.getElementById('signinEmail').style.borderColor = 'var(--red)';
+    return;
+  }
+  document.getElementById('signinEmail').style.borderColor = '';
+  const sendBtn = document.querySelector('#signinFormState .modal-send');
+  sendBtn.disabled = true;
+  sendBtn.textContent = 'Saving…';
+  try {
+    await fetch('/api/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, state: null, usage: { utm_campaign: 'signin-waitlist' } })
+    });
+  } catch (e) { /* non-fatal */ }
+  document.getElementById('signinFormState').style.display = 'none';
+  document.getElementById('signinSuccessState').style.display = 'block';
+  sendBtn.disabled = false;
+  sendBtn.textContent = 'Notify me';
 }
 
 // ── FEEDBACK SUBMIT ──
