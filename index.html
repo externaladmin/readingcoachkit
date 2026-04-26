@@ -349,36 +349,8 @@ body {
   transition: background .12s;
 }
 .tip-icon:hover, .tip-icon.open { background: var(--blue); color: #fff; }
-.tip-box {
-  display: none;
-  position: fixed;
-  z-index: 9000;
-  background: var(--text);
-  color: #fff;
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 1.5;
-  padding: 9px 12px;
-  border-radius: 4px;
-  width: 220px;
-  box-shadow: 0 4px 16px rgba(30,45,61,0.25);
-  pointer-events: none;
-  text-transform: none;
-  letter-spacing: 0;
-  font-family: var(--sans);
-}
-.tip-box::before {
-  content: '';
-  position: absolute;
-  top: -5px;
-  left: var(--arrow-left, 12px);
-  width: 10px;
-  height: 10px;
-  background: var(--text);
-  transform: rotate(45deg);
-  border-radius: 1px;
-}
-.tip-wrap.open .tip-box { display: block; }
+/* tip-box spans are hidden data containers only — rendering handled by #global-tip */
+.tip-box { display: none !important; }
 
 /* Label row with tooltip */
 .fi-label-row {
@@ -2570,47 +2542,69 @@ function formatDateShort(d) {
 }
 
 // ── TOOLTIPS ──
+// We append a single shared tooltip div to <body> so it's never clipped
+// by any overflow:hidden parent panel.
+const _tipEl = document.createElement('div');
+_tipEl.id = 'global-tip';
+_tipEl.style.cssText = [
+  'display:none',
+  'position:fixed',
+  'z-index:99999',
+  'background:#1E2D3D',
+  'color:#fff',
+  'font-size:12px',
+  'font-weight:400',
+  'line-height:1.5',
+  'padding:9px 12px',
+  'border-radius:4px',
+  'width:220px',
+  'max-width:calc(100vw - 24px)',
+  'box-shadow:0 4px 16px rgba(30,45,61,0.25)',
+  'pointer-events:none',
+  "font-family:'DM Sans',system-ui,sans-serif",
+  'text-transform:none',
+  'letter-spacing:0',
+].join(';');
+document.addEventListener('DOMContentLoaded', () => document.body.appendChild(_tipEl));
+
 function toggleTip(el) {
   const wrap = el.closest('.tip-wrap');
-  const isOpen = wrap.classList.contains('open');
+  const isOpen = wrap.dataset.tipOpen === '1';
 
-  // Close all open tooltips first
-  document.querySelectorAll('.tip-wrap.open').forEach(w => {
-    w.classList.remove('open');
-    w.querySelector('.tip-icon')?.classList.remove('open');
-  });
+  // Close any open tip
+  closeTips();
 
   if (!isOpen) {
-    wrap.classList.add('open');
+    const text = wrap.querySelector('.tip-box')?.textContent?.trim() || '';
+    if (!text) return;
+
+    wrap.dataset.tipOpen = '1';
     el.classList.add('open');
 
-    // Position the tooltip using fixed coords so it escapes any overflow:hidden parent
-    const box = wrap.querySelector('.tip-box');
+    _tipEl.textContent = text;
+    _tipEl.style.display = 'block';
+
     const iconRect = el.getBoundingClientRect();
     const tipW = 220;
     let left = iconRect.left;
-    // Don't overflow right edge of viewport
-    if (left + tipW > window.innerWidth - 12) {
-      left = window.innerWidth - tipW - 12;
-    }
-    box.style.top  = (iconRect.bottom + 6) + 'px';
-    box.style.left = left + 'px';
+    if (left + tipW > window.innerWidth - 12) left = window.innerWidth - tipW - 12;
+    if (left < 8) left = 8;
 
-    // Move the arrow to point at the icon
-    const arrow = box.querySelector('::before'); // can't set via JS — use a data attr approach
-    const arrowLeft = Math.max(8, iconRect.left - left + 2);
-    box.style.setProperty('--arrow-left', arrowLeft + 'px');
+    _tipEl.style.top  = (iconRect.bottom + 6) + 'px';
+    _tipEl.style.left = left + 'px';
   }
 }
-// Close tooltips when clicking outside
+
+function closeTips() {
+  _tipEl.style.display = 'none';
+  document.querySelectorAll('[data-tip-open]').forEach(w => delete w.dataset.tipOpen);
+  document.querySelectorAll('.tip-icon.open').forEach(i => i.classList.remove('open'));
+}
+
 document.addEventListener('click', e => {
-  if (!e.target.closest('.tip-wrap')) {
-    document.querySelectorAll('.tip-wrap.open').forEach(w => {
-      w.classList.remove('open');
-      w.querySelector('.tip-icon')?.classList.remove('open');
-    });
-  }
+  if (!e.target.closest('.tip-wrap')) closeTips();
 });
+document.addEventListener('scroll', closeTips, true);
 </script>
 
 
