@@ -5,6 +5,10 @@
       "dest": "/api/$1"
     },
     {
+      "src": "/api/waitlist",
+      "dest": "/api/waitlist.js"
+    },
+    {
       "src": "/signup",
       "dest": "/signup.html"
     },

@@ -249,14 +249,10 @@ async function submitSignup() {
   btn.textContent = 'Saving…';
 
   try {
-    await fetch('/api/subscribe', {
+    await fetch('/api/waitlist', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email,
-        state: null,
-        usage: { utm_campaign: 'signup-waitlist' }
-      })
+      body: JSON.stringify({ email, source: 'signup-waitlist' })
     });
   } catch (e) { /* non-fatal */ }
 
